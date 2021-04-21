@@ -1,0 +1,61 @@
+.logo {
+  font-size: 30px;
+}
+
+.topLayout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.action {
+  display: flex;
+  justify-content: space-between;
+}
+
+.layout {
+  position: relative;
+}
+
+.layout :global(.ant-layout-header) {
+  height: 36px;
+  line-height: 32px;
+  background-color: #2e51a2;
+}
+
+.layout :global(.ant-menu-horizontal) {
+  border-bottom: none;
+}
+
+.layout :global(.ant-menu) {
+  background: none;
+}
+
+.layout :global(.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected) {
+  color: white;
+  border: none;
+}
+
+.layout :global(.ant-menu-horizontal > .ant-menu-item) {
+  border-bottom: none;
+  padding: 0 5px;
+  font-weight: bold;
+}
+
+.layout :global(.ant-menu-horizontal > .ant-menu-item:left) {
+  border-bottom: none;
+}
+
+.layout :global(.ant-menu-horizontal > .ant-menu-item:hover) {
+  border: none;
+  color: white;
+}
+
+.content {
+  position: relative;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+}

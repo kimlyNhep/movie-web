@@ -8,14 +8,23 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.6.2",
+    "antd": "^4.15.2",
+    "autoprefixer": "^10.2.5",
+    "classnames": "^2.3.1",
     "next": "latest",
+    "postcss": "^8.2.10",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "tailwindcss": "^2.1.1"
   },
   "devDependencies": {
     "@types/node": "^12.12.21",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
+    "style-loader": "^2.0.0",
+    "stylelint": "^13.12.0",
+    "stylelint-config-standard": "^21.0.0",
     "typescript": "4.0"
   },
   "license": "MIT"

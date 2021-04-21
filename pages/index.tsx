@@ -1,15 +1,21 @@
-import Link from 'next/link'
-import Layout from '../components/Layout'
+import MainLayout from '../layout';
+import { ScrollCard } from '../components/ScrollCard';
+import { LeftSide } from '../components/LeftSide';
+import { Layout } from 'antd';
 
-const IndexPage = () => (
-  <Layout title="Home | Next.js + TypeScript Example">
-    <h1>Hello Next.js 👋</h1>
-    <p>
-      <Link href="/about">
-        <a>About</a>
-      </Link>
-    </p>
-  </Layout>
-)
+const { Content } = Layout;
 
-export default IndexPage
+const Home = () => (
+  <MainLayout>
+    <Content className='overflow-hidden border-r pr-1'>
+      <div>
+        <ScrollCard title='Spring Movies 2021' />
+        <ScrollCard title='Latest Updated Episode Movies' />
+        <ScrollCard title='Most Popular Movies' />
+      </div>
+    </Content>
+    <LeftSide />
+  </MainLayout>
+);
+
+export default Home;

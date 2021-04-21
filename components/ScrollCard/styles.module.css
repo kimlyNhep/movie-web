@@ -1,0 +1,21 @@
+.wrapper {
+  max-height: 220px;
+  display: flex;
+  overflow-x: auto;
+}
+
+.wrapper .item {
+  min-width: 160px;
+  height: 220px;
+  text-align: center;
+  background-color: #ddd;
+  margin-right: 2px;
+}
+
+.wrapper .item:hover {
+  opacity: 0.5;
+}
+
+.cards :global(.ant-divider) {
+  margin: 5px 0;
+}

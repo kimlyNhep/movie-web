@@ -1,0 +1,30 @@
+.leftSide {
+  min-width: 300px;
+  width: 300px;
+  background: white;
+  padding-left: 0.5rem;
+}
+
+.leftSide :global(.ant-card-body) {
+  padding: 5px;
+}
+
+.leftSide :global(.ant-divider) {
+  margin: 10px 0;
+}
+
+.topMovies :global(.ant-card-body) {
+  background-color: #f5f6f9;
+}
+
+.topMovies :global(.ant-card-head) {
+  min-height: 32px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  background-color: #dde1ec;
+}
+
+.topMovies :global(.ant-card-head-title) {
+  padding: 0;
+}
