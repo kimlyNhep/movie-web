@@ -6,12 +6,12 @@ import { LoginSvg } from '../components/svg';
 import { Footer } from '../components/Footer';
 import styles from './styles.module.css';
 
-interface layoutProps {
+interface ILayoutProps {
   username?: string;
   classname?: string;
 }
 
-const MainLayout: React.FC<layoutProps> = ({ username, classname, children }) => {
+const MainLayout: React.FC<ILayoutProps> = ({ username, classname, children }) => {
   const menu = (
     <Menu>
       <Menu.Item>

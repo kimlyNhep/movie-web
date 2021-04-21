@@ -1,13 +1,13 @@
 import { List } from 'antd';
 
-interface CardProps {
+interface ICardProps {
   title: string;
   rank: number;
   href: string;
   description: string;
 }
 
-export const CardRanking: React.FC<CardProps> = ({ title, rank, href, description }) => {
+export const CardRanking: React.FC<ICardProps> = ({ title, rank, href, description }) => {
   return (
     <List.Item key={title}>
       <div className='flex'>

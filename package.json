@@ -5,20 +5,28 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "gen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
     "antd": "^4.15.2",
     "autoprefixer": "^10.2.5",
     "classnames": "^2.3.1",
+    "graphql": "^15.5.0",
     "next": "latest",
     "postcss": "^8.2.10",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "tailwindcss": "^2.1.1"
+    "tailwindcss": "^2.1.1",
+    "urql": "^2.0.2"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "1.21.4",
+    "@graphql-codegen/typescript": "1.22.0",
+    "@graphql-codegen/typescript-operations": "1.17.16",
+    "@graphql-codegen/typescript-react-apollo": "2.2.4",
+    "@graphql-codegen/typescript-urql": "^2.0.6",
     "@types/node": "^12.12.21",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
