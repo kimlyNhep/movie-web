@@ -162,7 +162,7 @@ export type UserLoginInput = {
 export type UserRegisterInput = {
   email: Scalars['String'];
   username: Scalars['String'];
-  role: UserRoles;
+  role?: Maybe<UserRoles>;
   password: Scalars['String'];
 };
 
@@ -175,7 +175,7 @@ export type RegisterMutationVariables = Exact<{
   username: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
-  role: UserRoles;
+  role?: Maybe<UserRoles>;
 }>;
 
 
@@ -195,7 +195,7 @@ export type RegisterMutation = (
 
 
 export const RegisterDocument = gql`
-    mutation Register($username: String!, $email: String!, $password: String!, $role: UserRoles!) {
+    mutation Register($username: String!, $email: String!, $password: String!, $role: UserRoles) {
   register(
     options: {email: $email, username: $username, password: $password, role: $role}
   ) {

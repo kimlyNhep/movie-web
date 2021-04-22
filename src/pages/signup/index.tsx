@@ -1,43 +1,24 @@
-import { useEffect } from 'react';
-import { Card, Form, Button, Divider, Input, Checkbox, message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Card, Form, Button, Divider, Input, Checkbox, Alert } from 'antd';
 import cls from 'classnames';
 import { useRouter } from 'next/router';
 import styles from './styles.module.css';
-import { useMutation } from 'urql';
+import { useRegisterMutation } from '../../generated/graphql';
+import { toErrorMap } from '../../../utils/errorMap';
+import { Footer } from '../../components/Footer';
 
-interface IRegisterProps {
-  error: boolean;
+interface IRegisterProps {}
+
+interface IErrorState {
+  status: boolean;
+  error: { field: string; message: string };
 }
-
-const REGISTER_MUT = `
-mutation Register(
-  $username: String!
-  $email: String!
-  $password: String!
-  $role: UserRoles!
-) {
-  register(
-    options: {
-      email: $email
-      username: $username
-      password: $password
-      role: $role
-    }
-  ) {
-    user {
-      username
-    }
-    errors {
-      field
-      message
-    }
-  }
-}`;
 
 const Signup: React.FC<IRegisterProps> = (props) => {
   const router = useRouter();
-  const { error } = props;
-  const [, handleRegister] = useMutation(REGISTER_MUT);
+  const [, handleRegister] = useRegisterMutation();
+  const [errors, setErrors] = useState<IErrorState>();
+  const [message, setMessage] = useState<JSX.Element | null>();
 
   const hanldeGoHomePage = () => {
     router.push('/');
@@ -50,11 +31,23 @@ const Signup: React.FC<IRegisterProps> = (props) => {
   const handleCreateAccount = async (values: any) => {
     const { username, email, password } = values;
     const response = await handleRegister({ username, email, password });
+    if (response.data?.register.user) {
+      router.push('/');
+    } else if (response.data?.register.errors) {
+      const errors = response.data?.register.errors;
+      setErrors({ error: toErrorMap(errors), status: true });
+    }
   };
 
   useEffect(() => {
-    if (error) message.error(error, 3);
-  }, [error]);
+    if (errors?.status) {
+      setMessage(<Alert message={`${errors.error.field} ${errors.error.message}`} type='error' />);
+      setTimeout(() => {
+        setMessage(null);
+        // handleResetError();
+      }, 3000);
+    }
+  }, [errors]);
 
   return (
     <div className={cls(styles.cardOutter, 'mt-5')}>
@@ -130,6 +123,8 @@ const Signup: React.FC<IRegisterProps> = (props) => {
           </Form>
         </div>
       </Card>
+      <div className='w-80 mx-auto mt-2'>{message}</div>
+      <Footer />
     </div>
   );
 };
