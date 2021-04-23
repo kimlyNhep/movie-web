@@ -3,14 +3,24 @@ import { Card, Form, Button, Divider, Input, Checkbox, Alert } from 'antd';
 import cls from 'classnames';
 import { useRouter } from 'next/router';
 import styles from './styles.module.css';
+import { useLoginMutation } from '../../generated/graphql';
+import { toErrorMap } from '../../../utils/errorMap';
 
 interface ILoginProps {
   error: boolean;
 }
 
-const Login: React.FC<ILoginProps> = ({ error }) => {
+interface IErrorState {
+  status: boolean;
+  error: { field: string; message: string };
+}
+
+const Login: React.FC<ILoginProps> = () => {
+  const [errors, setErrors] = useState<IErrorState>();
   const router = useRouter();
+  const [form] = Form.useForm();
   const [message, setMessage] = useState<JSX.Element | null>();
+  const [loginRequest,{data}] = useLoginMutation();
 
   const handleGoHomePage = () => {
     router.push('/');
@@ -21,14 +31,25 @@ const Login: React.FC<ILoginProps> = ({ error }) => {
   };
 
   useEffect(() => {
-    if (error) {
-      setMessage(<Alert message='' description={error} type='error' showIcon />);
+    if (errors?.status) {
+      setMessage(<Alert message={`${errors.error.field} ${errors.error.message}`} type='error' />);
       setTimeout(() => {
         setMessage(null);
         // handleResetError();
-      }, 2000);
+      }, 3000);
     }
-  }, [error]);
+  }, [errors]);
+
+  const handleLogin = async () => {
+    const { username, password } = form.getFieldsValue();
+    await loginRequest({ variables: { username, password } });
+    if (data?.login.accessToken) {
+      router.push('/');
+    } else if (data?.login.errors) {
+      const errors = data.login.errors;
+      setErrors({ error: toErrorMap(errors), status: true });
+    }
+  };
 
   return (
     <div className={cls(styles.cardOutter, 'mt-5')}>
@@ -50,8 +71,8 @@ const Login: React.FC<ILoginProps> = ({ error }) => {
             name='basic'
             layout='vertical'
             initialValues={{ remember: true }}
-            // onFinish={handleLoginClick}
-            // onFinishFailed={onFinishFailed}
+            onFinish={handleLogin}
+            form={form}
           >
             <Form.Item label='Username' required name='username'>
               <Input style={{ width: '400px' }} size='large' />

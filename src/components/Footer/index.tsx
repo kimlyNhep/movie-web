@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 
 export const Footer = () => {
   return (
-    <div className={cls(styles.footer, 'flex flex-col items-center')}>
+    <footer className={cls(styles.footer, 'flex flex-col items-center')}>
       <div className='flex w-60'>
         <span className='text-gray-400 whitespace-nowrap'>Follow Us</span>
         <FacebookLogo />
@@ -41,7 +41,7 @@ export const Footer = () => {
           </Button>
         </li>
       </ul>
-      <span className='text-gray-400 text-xs'>©2021 All Rights Reserved.</span>
-    </div>
+      <span className='text-xs text-gray-400'>©2021 All Rights Reserved.</span>
+    </footer>
   );
 };

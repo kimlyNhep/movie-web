@@ -3,9 +3,9 @@ import { Card, Form, Button, Divider, Input, Checkbox, Alert } from 'antd';
 import cls from 'classnames';
 import { useRouter } from 'next/router';
 import styles from './styles.module.css';
-import { useRegisterMutation } from '../../generated/graphql';
-import { toErrorMap } from '../../../utils/errorMap';
+// import { toErrorMap } from '../../../utils/errorMap';
 import { Footer } from '../../components/Footer';
+// import { useMutation } from '@apollo/client';
 
 interface IRegisterProps {}
 
@@ -14,11 +14,11 @@ interface IErrorState {
   error: { field: string; message: string };
 }
 
-const Signup: React.FC<IRegisterProps> = (props) => {
+const Signup: React.FC<IRegisterProps> = () => {
   const router = useRouter();
-  const [, handleRegister] = useRegisterMutation();
   const [errors, setErrors] = useState<IErrorState>();
   const [message, setMessage] = useState<JSX.Element | null>();
+  // const [registerRequest] = useMutation(REGISTER_MUT);
 
   const hanldeGoHomePage = () => {
     router.push('/');
@@ -29,14 +29,14 @@ const Signup: React.FC<IRegisterProps> = (props) => {
   };
 
   const handleCreateAccount = async (values: any) => {
-    const { username, email, password } = values;
-    const response = await handleRegister({ username, email, password });
-    if (response.data?.register.user) {
-      router.push('/');
-    } else if (response.data?.register.errors) {
-      const errors = response.data?.register.errors;
-      setErrors({ error: toErrorMap(errors), status: true });
-    }
+    // const { username, email, password } = values;
+    // const response = await registerRequest({ variables: { username, email, password } });
+    // if (response.data?.register.user) {
+    //   router.push('/');
+    // } else if (response.data?.register.errors) {
+    //   const errors = response.data?.register.errors;
+    //   setErrors({ error: toErrorMap(errors), status: true });
+    // }
   };
 
   useEffect(() => {

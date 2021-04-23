@@ -1,0 +1,15 @@
+.profileSide {
+  min-width: 224px;
+  width: 224px;
+  background: white;
+}
+
+.photo {
+  display: flex;
+  height: 250px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: #cac9c9;
+  border-radius: 0.3rem;
+}
