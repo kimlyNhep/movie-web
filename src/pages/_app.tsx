@@ -1,18 +1,29 @@
 import type { AppProps } from 'next/app';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import '../../styles/globals.css';
 import 'antd/dist/antd.css';
-
-const client = new ApolloClient({
-  uri: 'http://localhost:8000/graphql',
-  cache: new InMemoryCache(),
-});
+import { createClient, Provider } from 'urql';
+import { CookiesProvider, useCookies } from 'react-cookie';
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const [cookies] = useCookies(['qid']);
+  const token = cookies.qid;
+
+  const client = createClient({
+    url: 'http://localhost:8000/graphql',
+    fetchOptions: {
+      credentials: 'include',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
+
   return (
-    <ApolloProvider client={client}>
-      <Component {...pageProps} />
-    </ApolloProvider>
+    <Provider value={client}>
+      <CookiesProvider>
+        <Component {...pageProps} />
+      </CookiesProvider>
+    </Provider>
   );
 }
 
