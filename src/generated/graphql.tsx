@@ -1,13 +1,9 @@
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -42,8 +38,15 @@ export type ErrorResponse = {
   message?: Maybe<Scalars['String']>;
 };
 
+export type Genre = {
+  __typename?: 'Genre';
+  id: Scalars['Float'];
+  name: Scalars['String'];
+};
+
 export type GenreResponse = {
   __typename?: 'GenreResponse';
+  genres?: Maybe<Array<Genre>>;
   message?: Maybe<Scalars['String']>;
   errors?: Maybe<Array<ErrorResponse>>;
 };
@@ -51,6 +54,7 @@ export type GenreResponse = {
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   accessToken?: Maybe<Scalars['String']>;
+  user?: Maybe<User>;
   errors?: Maybe<Array<ErrorResponse>>;
 };
 
@@ -84,7 +88,7 @@ export type MovieResponse = {
 
 export enum MovieType {
   Tv = 'TV',
-  Movie = 'MOVIE',
+  Movie = 'MOVIE'
 }
 
 export type Mutation = {
@@ -96,21 +100,26 @@ export type Mutation = {
   login: LoginResponse;
 };
 
+
 export type MutationCreateMovieArgs = {
   options: CreateMovieInput;
 };
+
 
 export type MutationCreateMovieInformationArgs = {
   options: CreateMovieInformationInput;
 };
 
+
 export type MutationCreateGenreArgs = {
   name: Scalars['String'];
 };
 
+
 export type MutationRegisterArgs = {
   options: UserRegisterInput;
 };
+
 
 export type MutationLoginArgs = {
   options: UserLoginInput;
@@ -118,6 +127,7 @@ export type MutationLoginArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  getGenres: GenreResponse;
   me: User;
 };
 
@@ -129,7 +139,7 @@ export type RegisterResponse = {
 
 export enum StatusType {
   Completed = 'COMPLETED',
-  Ongoing = 'ONGOING',
+  Ongoing = 'ONGOING'
 }
 
 export type User = {
@@ -155,29 +165,109 @@ export type UserRegisterInput = {
 
 export enum UserRoles {
   Admin = 'ADMIN',
-  Member = 'MEMBER',
+  Member = 'MEMBER'
 }
+
+export type ErrorFragmentFragment = (
+  { __typename?: 'ErrorResponse' }
+  & Pick<ErrorResponse, 'message' | 'field'>
+);
+
+export type CreateGenreMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateGenreMutation = (
+  { __typename?: 'Mutation' }
+  & { createGenre: (
+    { __typename?: 'GenreResponse' }
+    & Pick<GenreResponse, 'message'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & ErrorFragmentFragment
+    )>> }
+  ) }
+);
+
+export type GetGenresQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetGenresQuery = (
+  { __typename?: 'Query' }
+  & { getGenres: (
+    { __typename?: 'GenreResponse' }
+    & { genres?: Maybe<Array<(
+      { __typename?: 'Genre' }
+      & Pick<Genre, 'name'>
+    )>> }
+  ) }
+);
+
+export type CreateMovieMutationVariables = Exact<{
+  title: Scalars['String'];
+  description: Scalars['String'];
+  photo: Scalars['String'];
+  creator: Scalars['String'];
+  genres: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type CreateMovieMutation = (
+  { __typename?: 'Mutation' }
+  & { createMovie: (
+    { __typename?: 'MovieResponse' }
+    & Pick<MovieResponse, 'message'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & ErrorFragmentFragment
+    )>> }
+  ) }
+);
+
+export type CreateMovieInformationMutationVariables = Exact<{
+  type: MovieType;
+  producer?: Maybe<Scalars['String']>;
+  episode: Scalars['Int'];
+  status: StatusType;
+  duration: Scalars['Int'];
+  releasedDate?: Maybe<Scalars['String']>;
+  movie: Scalars['String'];
+}>;
+
+
+export type CreateMovieInformationMutation = (
+  { __typename?: 'Mutation' }
+  & { createMovieInformation: (
+    { __typename?: 'MovieResponse' }
+    & Pick<MovieResponse, 'message'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & ErrorFragmentFragment
+    )>> }
+  ) }
+);
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
 }>;
 
-export type LoginMutation = { __typename?: 'Mutation' } & {
-  login: { __typename?: 'LoginResponse' } & Pick<
-    LoginResponse,
-    'accessToken'
-  > & {
-      errors?: Maybe<
-        Array<
-          { __typename?: 'ErrorResponse' } & Pick<
-            ErrorResponse,
-            'field' | 'message'
-          >
-        >
-      >;
-    };
-};
+
+export type LoginMutation = (
+  { __typename?: 'Mutation' }
+  & { login: (
+    { __typename?: 'LoginResponse' }
+    & Pick<LoginResponse, 'accessToken'>
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'email' | 'role'>
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & ErrorFragmentFragment
+    )>> }
+  ) }
+);
 
 export type RegisterMutationVariables = Exact<{
   username: Scalars['String'];
@@ -186,84 +276,149 @@ export type RegisterMutationVariables = Exact<{
   role?: Maybe<UserRoles>;
 }>;
 
-export type RegisterMutation = { __typename?: 'Mutation' } & {
-  register: { __typename?: 'RegisterResponse' } & {
-    user?: Maybe<{ __typename?: 'User' } & Pick<User, 'username'>>;
-    errors?: Maybe<
-      Array<
-        { __typename?: 'ErrorResponse' } & Pick<
-          ErrorResponse,
-          'field' | 'message'
-        >
-      >
-    >;
-  };
-};
 
-export type MeQueryVariables = Exact<{ [key: string]: never }>;
+export type RegisterMutation = (
+  { __typename?: 'Mutation' }
+  & { register: (
+    { __typename?: 'RegisterResponse' }
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'email' | 'role'>
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & ErrorFragmentFragment
+    )>> }
+  ) }
+);
 
-export type MeQuery = { __typename?: 'Query' } & {
-  me: { __typename?: 'User' } & Pick<User, 'username' | 'email' | 'role'>;
-};
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
-export const LoginDocument = gql`
-  mutation Login($username: String!, $password: String!) {
-    login(options: { username: $username, password: $password }) {
-      accessToken
-      errors {
-        field
-        message
-      }
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { me: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username' | 'email' | 'role'>
+  ) }
+);
+
+export const ErrorFragmentFragmentDoc = gql`
+    fragment ErrorFragment on ErrorResponse {
+  message
+  field
+}
+    `;
+export const CreateGenreDocument = gql`
+    mutation CreateGenre($name: String!) {
+  createGenre(name: $name) {
+    message
+    errors {
+      ...ErrorFragment
     }
   }
-`;
-
-export function useLoginMutation() {
-  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
 }
-export const RegisterDocument = gql`
-  mutation Register(
-    $username: String!
-    $email: String!
-    $password: String!
-    $role: UserRoles
+    ${ErrorFragmentFragmentDoc}`;
+
+export function useCreateGenreMutation() {
+  return Urql.useMutation<CreateGenreMutation, CreateGenreMutationVariables>(CreateGenreDocument);
+};
+export const GetGenresDocument = gql`
+    query GetGenres {
+  getGenres {
+    genres {
+      name
+    }
+  }
+}
+    `;
+
+export function useGetGenresQuery(options: Omit<Urql.UseQueryArgs<GetGenresQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetGenresQuery>({ query: GetGenresDocument, ...options });
+};
+export const CreateMovieDocument = gql`
+    mutation CreateMovie($title: String!, $description: String!, $photo: String!, $creator: String!, $genres: [String!]!) {
+  createMovie(
+    options: {title: $title, description: $description, photo: $photo, creator: $creator, genres: $genres}
   ) {
-    register(
-      options: {
-        email: $email
-        username: $username
-        password: $password
-        role: $role
-      }
-    ) {
-      user {
-        username
-      }
-      errors {
-        field
-        message
-      }
+    message
+    errors {
+      ...ErrorFragment
     }
   }
-`;
-
-export function useRegisterMutation() {
-  return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(
-    RegisterDocument
-  );
 }
-export const MeDocument = gql`
-  query Me {
-    me {
+    ${ErrorFragmentFragmentDoc}`;
+
+export function useCreateMovieMutation() {
+  return Urql.useMutation<CreateMovieMutation, CreateMovieMutationVariables>(CreateMovieDocument);
+};
+export const CreateMovieInformationDocument = gql`
+    mutation CreateMovieInformation($type: MovieType!, $producer: String, $episode: Int!, $status: StatusType!, $duration: Int!, $releasedDate: String, $movie: String!) {
+  createMovieInformation(
+    options: {type: $type, producer: $producer, episode: $episode, status: $status, duration: $duration, released_date: $releasedDate, movie: $movie}
+  ) {
+    message
+    errors {
+      ...ErrorFragment
+    }
+  }
+}
+    ${ErrorFragmentFragmentDoc}`;
+
+export function useCreateMovieInformationMutation() {
+  return Urql.useMutation<CreateMovieInformationMutation, CreateMovieInformationMutationVariables>(CreateMovieInformationDocument);
+};
+export const LoginDocument = gql`
+    mutation Login($username: String!, $password: String!) {
+  login(options: {username: $username, password: $password}) {
+    accessToken
+    user {
+      id
       username
       email
       role
     }
+    errors {
+      ...ErrorFragment
+    }
   }
-`;
-
-export function useMeQuery(
-  options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}
-) {
-  return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
 }
+    ${ErrorFragmentFragmentDoc}`;
+
+export function useLoginMutation() {
+  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+};
+export const RegisterDocument = gql`
+    mutation Register($username: String!, $email: String!, $password: String!, $role: UserRoles) {
+  register(
+    options: {email: $email, username: $username, password: $password, role: $role}
+  ) {
+    user {
+      id
+      username
+      email
+      role
+    }
+    errors {
+      ...ErrorFragment
+    }
+  }
+}
+    ${ErrorFragmentFragmentDoc}`;
+
+export function useRegisterMutation() {
+  return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const MeDocument = gql`
+    query Me {
+  me {
+    id
+    username
+    email
+    role
+  }
+}
+    `;
+
+export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
+};

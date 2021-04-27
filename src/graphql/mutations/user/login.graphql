@@ -1,9 +1,14 @@
 mutation Login($username: String!, $password: String!) {
-    login(options: { username: $username, password: $password }) {
-      accessToken @client
-      errors {
-        field
-        message
-      }
+  login(options: { username: $username, password: $password }) {
+    accessToken
+    user {
+      id
+      username
+      email
+      role
     }
+    errors {
+      ...ErrorFragment
+    }
+  }
 }

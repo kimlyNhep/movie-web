@@ -3,6 +3,7 @@ import {
   HeartOutlined,
   MailOutlined,
   UserOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Button } from 'antd';
 import cls from 'classnames';
@@ -11,6 +12,10 @@ import { LoginSvg } from '../components/svg';
 import { Footer } from '../components/Footer';
 import styles from './styles.module.css';
 import { useMeQuery } from '../generated/graphql';
+import { useRouter } from 'next/router';
+import { Spin } from 'antd';
+import { withUrqlClient } from 'next-urql';
+import { createUrqlClient } from '../../utils/createUrqlClient';
 
 interface ILayoutProps {
   classname?: string;
@@ -18,33 +23,51 @@ interface ILayoutProps {
 
 const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
   const [{ data, fetching }] = useMeQuery();
+  const router = useRouter();
+
+  const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
   let body = null;
 
   if (!data?.me) {
     body = (
       <>
-        <Menu.Item>
+        <Menu.Item key='login'>
           <div className='flex items-center justify-between'>
-            <a rel='noopener noreferrer' href='/login' className='mr-1'>
-              Login
-            </a>
+            <div className='mr-1'>Login</div>
             <LoginSvg />
           </div>
         </Menu.Item>
-        <Menu.Item>
+        <Menu.Item key='signup'>
           <div className='flex items-center justify-between'>
-            <a rel='noopener noreferrer' href='/signup' className='mr-1'>
-              Join with us
-            </a>
+            <div className='mr-1'>Join with us</div>
           </div>
         </Menu.Item>
       </>
     );
-  } else if (fetching) {
+  } else if (data.me) {
+    body = (
+      <Menu.Item key='logout'>
+        <div className='flex items-center justify-between'>
+          <div className='mr-1'>Logout</div>
+          <LoginSvg />
+        </div>
+      </Menu.Item>
+    );
   }
 
-  const menu = <Menu>{body}</Menu>;
+  const handleMenuClick = (value: any) => {
+    switch (value.key) {
+      case 'login':
+        return router.push('/login');
+      case 'signup':
+        return router.push('/signup');
+      default:
+        return router.push('/');
+    }
+  };
+
+  const menu = <Menu onClick={handleMenuClick}>{body}</Menu>;
 
   return (
     <div>
@@ -57,15 +80,16 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
             <MailOutlined style={{ fontSize: '25px', paddingRight: '1rem' }} />
             <BellOutlined style={{ fontSize: '25px', paddingRight: '1rem' }} />
             <HeartOutlined style={{ fontSize: '25px', paddingRight: '1rem' }} />
-            {data?.me.username && (
+            {data?.me?.username && (
               <Button
                 type='link'
                 href='/profile'
                 style={{ fontSize: '16px', paddingRight: '1rem' }}
               >
-                {data?.me.username}
+                {data?.me?.username}
               </Button>
             )}
+            {fetching && <Spin indicator={antIcon} />}
             <Dropdown overlay={menu} placement='bottomCenter' arrow>
               <UserOutlined style={{ fontSize: '25px' }} />
             </Dropdown>
@@ -81,4 +105,4 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
   );
 };
 
-export default MainLayout;
+export default withUrqlClient(createUrqlClient)(MainLayout);

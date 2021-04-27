@@ -11,7 +11,7 @@ const ProfileDetail = () => {
   };
 
   return (
-    <Layout>
+    <Layout pageProps>
       <ProfileSide></ProfileSide>
       <Divider type='vertical' style={{ height: '300px' }}></Divider>
       <Button size='small' onClick={handleAddMovie}>

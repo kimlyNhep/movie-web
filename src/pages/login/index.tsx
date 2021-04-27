@@ -3,13 +3,15 @@ import { Card, Form, Button, Divider, Input, Checkbox, Alert } from 'antd';
 import cls from 'classnames';
 import { useRouter } from 'next/router';
 import styles from './styles.module.css';
-import { useLoginMutation } from '../../generated/graphql';
+import { useLoginMutation, useMeQuery } from '../../generated/graphql';
 import { toErrorMap } from '../../../utils/errorMap';
 import { Footer } from '../../components/Footer';
-import { useCookies } from 'react-cookie';
+import { withUrqlClient } from 'next-urql';
+import { createUrqlClient } from '../../../utils/createUrqlClient';
+import { NextPage } from 'next';
 
 interface ILoginProps {
-  error: boolean;
+  error?: boolean;
 }
 
 interface IErrorState {
@@ -17,13 +19,13 @@ interface IErrorState {
   error: { field: string; message: string };
 }
 
-const Login: React.FC<ILoginProps> = () => {
-  const [, setCookie] = useCookies(['qid']);
+const Login: NextPage<ILoginProps> = () => {
   const [errors, setErrors] = useState<IErrorState>();
   const router = useRouter();
   const [form] = Form.useForm();
   const [message, setMessage] = useState<JSX.Element | null>();
   const [, loginRequest] = useLoginMutation();
+  // const [meResponse] = useMeQuery();
 
   const handleGoHomePage = () => {
     router.push('/');
@@ -52,8 +54,8 @@ const Login: React.FC<ILoginProps> = () => {
     const { username, password } = form.getFieldsValue();
     const resposne = await loginRequest({ username, password });
     if (resposne.data?.login.accessToken) {
-      setCookie('qid', resposne.data?.login.accessToken);
-      router.push('/');
+      // console.log(meResponse.data);
+      await router.push('/');
     } else if (resposne.data?.login.errors) {
       const errors = resposne.data.login.errors;
       setErrors({ error: toErrorMap(errors), status: true });
@@ -136,4 +138,4 @@ const Login: React.FC<ILoginProps> = () => {
   );
 };
 
-export default Login;
+export default withUrqlClient(createUrqlClient)(Login);

@@ -1,11 +1,25 @@
-mutation Register($username: String!, $email: String!, $password: String!, $role: UserRoles) {
-    register(options: { email: $email, username: $username, password: $password, role: $role }) {
-      user {
-        username
-      }
-      errors {
-        field
-        message
-      }
+mutation Register(
+  $username: String!
+  $email: String!
+  $password: String!
+  $role: UserRoles
+) {
+  register(
+    options: {
+      email: $email
+      username: $username
+      password: $password
+      role: $role
     }
+  ) {
+    user {
+      id
+      username
+      email
+      role
+    }
+    errors {
+      ...ErrorFragment
+    }
+  }
 }

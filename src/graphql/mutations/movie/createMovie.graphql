@@ -1,0 +1,22 @@
+mutation CreateMovie(
+  $title: String!
+  $description: String!
+  $photo: String!
+  $creator: String!
+  $genres: [String!]!
+) {
+  createMovie(
+    options: {
+      title: $title
+      description: $description
+      photo: $photo
+      creator: $creator
+      genres: $genres
+    }
+  ) {
+    message
+    errors {
+      ...ErrorFragment
+    }
+  }
+}

@@ -1,0 +1,26 @@
+mutation CreateMovieInformation(
+  $type: MovieType!
+  $producer: String
+  $episode: Int!
+  $status: StatusType!
+  $duration: Int!
+  $releasedDate: String
+  $movie: String!
+) {
+  createMovieInformation(
+    options: {
+      type: $type
+      producer: $producer
+      episode: $episode
+      status: $status
+      duration: $duration
+      released_date: $releasedDate
+      movie: $movie
+    }
+  ) {
+    message
+    errors {
+      ...ErrorFragment
+    }
+  }
+}

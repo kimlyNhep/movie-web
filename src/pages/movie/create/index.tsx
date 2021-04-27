@@ -1,10 +1,23 @@
 // import { useEffect } from 'react';
-import { Divider, Form, Input, Image, Select, InputNumber, DatePicker, Button } from 'antd';
+import {
+  Divider,
+  Form,
+  Input,
+  Image,
+  Select,
+  InputNumber,
+  DatePicker,
+  Button,
+} from 'antd';
+import { InferGetStaticPropsType } from 'next';
+import { useGetGenresQuery } from '../../../generated/graphql';
 import Layout from '../../../layout';
 
 const { Option } = Select;
 
-const CreateMovie: React.FC = (props) => {
+const CreateMovie: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
+  genres,
+}) => {
   const [form] = Form.useForm();
   const layout = {
     labelCol: { span: 3 },
@@ -15,15 +28,22 @@ const CreateMovie: React.FC = (props) => {
   };
 
   const handleSummiting = () => {
-    // console.log(form.getFieldValue());
+    console.log(form.getFieldsValue());
   };
 
   return (
-    <Layout>
+    <Layout pageProps>
       <div className='flex flex-col w-full'>
-        <Form {...layout} form={form} initialValues={{ remember: true }} onFinish={handleSummiting}>
+        <Form
+          {...layout}
+          form={form}
+          initialValues={{ remember: true }}
+          onFinish={handleSummiting}
+        >
           <div className='font-bold'>Movie</div>
-          <Divider style={{ background: 'gray', width: '100%', marginTop: '2px' }} />
+          <Divider
+            style={{ background: 'gray', width: '100%', marginTop: '2px' }}
+          />
           <Form.Item
             label='Title'
             name='title'
@@ -52,14 +72,16 @@ const CreateMovie: React.FC = (props) => {
             labelAlign='left'
             rules={[{ required: true, message: 'Please input Genre' }]}
           >
-            {/* <Select size='small'>
-              {genres.map((genre) => (
-                <Select.Option value={genre}>{genre}</Select.Option>
+            <Select size='small'>
+              {genres?.map((genre) => (
+                <Select.Option value={genre.name}>{genre.name}</Select.Option>
               ))}
-            </Select> */}
+            </Select>
           </Form.Item>
           <div className='font-bold'>Movie Information</div>
-          <Divider style={{ background: 'gray', width: '100%', marginTop: '2px' }} />
+          <Divider
+            style={{ background: 'gray', width: '100%', marginTop: '2px' }}
+          />
           <Form.Item
             label='Type'
             name='type'
@@ -117,7 +139,12 @@ const CreateMovie: React.FC = (props) => {
             <DatePicker style={{ width: '100%' }} size='small' />
           </Form.Item>
           <Form.Item {...tailLayout}>
-            <Button type='primary' htmlType='submit' size='small' className='w-20'>
+            <Button
+              type='primary'
+              htmlType='submit'
+              size='small'
+              className='w-20'
+            >
               Save
             </Button>
           </Form.Item>
@@ -125,6 +152,16 @@ const CreateMovie: React.FC = (props) => {
       </div>
     </Layout>
   );
+};
+
+export const getStaticProps = async () => {
+  const [getGenresRequest] = useGetGenresQuery();
+
+  return {
+    props: {
+      genres: getGenresRequest.data?.getGenres.genres,
+    },
+  };
 };
 
 export default CreateMovie;
