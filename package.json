@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
+    "@apollo/client": "^3.3.15",
     "@urql/exchange-auth": "^0.1.2",
     "@urql/exchange-graphcache": "^4.0.0",
     "antd": "^4.15.2",
@@ -19,6 +20,7 @@
     "graphql-tag": "^2.11.0",
     "isomorphic-unfetch": "^3.1.0",
     "js-cookie": "^2.2.1",
+    "moment": "^2.29.1",
     "next": "latest",
     "next-apollo": "^5.0.4",
     "next-urql": "^3.0.1",
@@ -35,6 +37,7 @@
     "@graphql-codegen/cli": "1.21.4",
     "@graphql-codegen/typescript": "1.22.0",
     "@graphql-codegen/typescript-operations": "1.17.16",
+    "@graphql-codegen/typescript-react-apollo": "2.2.4",
     "@graphql-codegen/typescript-urql": "^2.0.6",
     "@types/js-cookie": "^2.2.6",
     "@types/node": "^12.12.21",

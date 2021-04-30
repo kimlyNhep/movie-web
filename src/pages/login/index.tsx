@@ -25,7 +25,6 @@ const Login: NextPage<ILoginProps> = () => {
   const [form] = Form.useForm();
   const [message, setMessage] = useState<JSX.Element | null>();
   const [, loginRequest] = useLoginMutation();
-  // const [meResponse] = useMeQuery();
 
   const handleGoHomePage = () => {
     router.push('/');
@@ -54,7 +53,6 @@ const Login: NextPage<ILoginProps> = () => {
     const { username, password } = form.getFieldsValue();
     const resposne = await loginRequest({ username, password });
     if (resposne.data?.login.accessToken) {
-      // console.log(meResponse.data);
       await router.push('/');
     } else if (resposne.data?.login.errors) {
       const errors = resposne.data.login.errors;

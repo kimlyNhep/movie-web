@@ -2,10 +2,7 @@ mutation Login($username: String!, $password: String!) {
   login(options: { username: $username, password: $password }) {
     accessToken
     user {
-      id
-      username
-      email
-      role
+      ...UserFragment
     }
     errors {
       ...ErrorFragment

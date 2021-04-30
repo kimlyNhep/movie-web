@@ -11,7 +11,7 @@ import { Navbar } from '../components/Navbar';
 import { LoginSvg } from '../components/svg';
 import { Footer } from '../components/Footer';
 import styles from './styles.module.css';
-import { useMeQuery } from '../generated/graphql';
+import { useLogoutMutation, useMeQuery } from '../generated/graphql';
 import { useRouter } from 'next/router';
 import { Spin } from 'antd';
 import { withUrqlClient } from 'next-urql';
@@ -23,6 +23,7 @@ interface ILayoutProps {
 
 const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
   const [{ data, fetching }] = useMeQuery();
+  const [, logoutRequest] = useLogoutMutation();
   const router = useRouter();
 
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -62,9 +63,16 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
         return router.push('/login');
       case 'signup':
         return router.push('/signup');
+      case 'logout':
+        handleLogOut();
+        break;
       default:
         return router.push('/');
     }
+  };
+
+  const handleLogOut = async () => {
+    const response = await logoutRequest();
   };
 
   const menu = <Menu onClick={handleMenuClick}>{body}</Menu>;

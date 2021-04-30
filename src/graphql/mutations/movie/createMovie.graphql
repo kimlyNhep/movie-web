@@ -1,8 +1,7 @@
 mutation CreateMovie(
   $title: String!
-  $description: String!
-  $photo: String!
-  $creator: String!
+  $description: String
+  $photo: String
   $genres: [String!]!
 ) {
   createMovie(
@@ -10,7 +9,6 @@ mutation CreateMovie(
       title: $title
       description: $description
       photo: $photo
-      creator: $creator
       genres: $genres
     }
   ) {

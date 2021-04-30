@@ -1,5 +1,5 @@
 .wrapper {
-  max-height: 220px;
+  max-height: 240px;
   display: flex;
   overflow-x: auto;
 }

@@ -1,4 +1,9 @@
-import { LoginMutation, MeQuery, MeDocument } from './../src/generated/graphql';
+import {
+  LoginMutation,
+  MeQuery,
+  MeDocument,
+  LogoutMutation,
+} from './../src/generated/graphql';
 import { dedupExchange, fetchExchange } from 'urql';
 import { cacheExchange } from '@urql/exchange-graphcache';
 import Cookie from 'js-cookie';
@@ -29,12 +34,23 @@ export const createUrqlClient = (ssrExchange: any) => {
                   if (result.login.errors) {
                     return query;
                   } else {
-                    console.log(result);
                     return {
-                      me: result.login.user!,
+                      me: result.login.user,
                     };
                   }
                 }
+              );
+            },
+            logout: (_result, args, cache, info) => {
+              betterUpdateQuery<LogoutMutation, MeQuery>(
+                cache,
+                {
+                  query: MeDocument,
+                },
+                _result,
+                () => ({
+                  me: null,
+                })
               );
             },
           },
