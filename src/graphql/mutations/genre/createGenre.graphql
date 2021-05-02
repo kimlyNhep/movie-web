@@ -1,6 +1,9 @@
 mutation CreateGenre($name: String!) {
   createGenre(name: $name) {
-    message
+    genre {
+      id
+      name
+    }
     errors {
       ...ErrorFragment
     }

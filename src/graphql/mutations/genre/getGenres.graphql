@@ -1,5 +1,9 @@
 query GetGenres {
   getGenres {
+    errors {
+      field
+      message
+    }
     genres {
       id
       name

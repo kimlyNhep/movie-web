@@ -8,3 +8,7 @@ export function betterUpdateQuery<Result, Query>(
 ) {
   return cache.updateQuery(qi, (data) => fn(result, data as any) as any);
 }
+
+export function toArray<X>(xs: Iterable<X>): X[] {
+  return [...xs];
+}

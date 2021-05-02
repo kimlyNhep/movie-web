@@ -10,12 +10,19 @@ const ProfileDetail = () => {
     router.push('/movie/create');
   };
 
+  const handleNewGenre = () => {
+    router.push('/genre/create');
+  };
+
   return (
-    <Layout pageProps>
+    <Layout>
       <ProfileSide></ProfileSide>
       <Divider type='vertical' style={{ height: '300px' }}></Divider>
       <Button size='small' onClick={handleAddMovie}>
         Add Movie
+      </Button>
+      <Button size='small' onClick={handleNewGenre}>
+        New Genre
       </Button>
     </Layout>
   );

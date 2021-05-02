@@ -46,8 +46,13 @@ export type Genre = {
 
 export type GenreResponse = {
   __typename?: 'GenreResponse';
+  genre?: Maybe<Genre>;
+  errors?: Maybe<Array<ErrorResponse>>;
+};
+
+export type GenresResponse = {
+  __typename?: 'GenresResponse';
   genres?: Maybe<Array<Genre>>;
-  message?: Maybe<Scalars['String']>;
   errors?: Maybe<Array<ErrorResponse>>;
 };
 
@@ -70,7 +75,7 @@ export type Movie = {
 
 export type MovieInfo = {
   __typename?: 'MovieInfo';
-  id: Scalars['Int'];
+  id: Scalars['String'];
   type: Scalars['String'];
   producer?: Maybe<Scalars['String']>;
   episode: Scalars['Int'];
@@ -148,7 +153,7 @@ export type MutationLoginArgs = {
 export type Query = {
   __typename?: 'Query';
   test?: Maybe<User>;
-  getGenres: GenreResponse;
+  getGenres: GenresResponse;
   me?: Maybe<User>;
 };
 
@@ -209,8 +214,10 @@ export type CreateGenreMutation = (
   { __typename?: 'Mutation' }
   & { createGenre: (
     { __typename?: 'GenreResponse' }
-    & Pick<GenreResponse, 'message'>
-    & { errors?: Maybe<Array<(
+    & { genre?: Maybe<(
+      { __typename?: 'Genre' }
+      & Pick<Genre, 'id' | 'name'>
+    )>, errors?: Maybe<Array<(
       { __typename?: 'ErrorResponse' }
       & ErrorFragmentFragment
     )>> }
@@ -223,8 +230,11 @@ export type GetGenresQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetGenresQuery = (
   { __typename?: 'Query' }
   & { getGenres: (
-    { __typename?: 'GenreResponse' }
-    & { genres?: Maybe<Array<(
+    { __typename?: 'GenresResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & Pick<ErrorResponse, 'field' | 'message'>
+    )>>, genres?: Maybe<Array<(
       { __typename?: 'Genre' }
       & Pick<Genre, 'id' | 'name'>
     )>> }
@@ -374,7 +384,10 @@ export const UserFragmentFragmentDoc = gql`
 export const CreateGenreDocument = gql`
     mutation CreateGenre($name: String!) {
   createGenre(name: $name) {
-    message
+    genre {
+      id
+      name
+    }
     errors {
       ...ErrorFragment
     }
@@ -410,6 +423,10 @@ export type CreateGenreMutationOptions = Apollo.BaseMutationOptions<CreateGenreM
 export const GetGenresDocument = gql`
     query GetGenres {
   getGenres {
+    errors {
+      field
+      message
+    }
     genres {
       id
       name
