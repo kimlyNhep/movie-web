@@ -3,11 +3,9 @@ import { Card, Form, Button, Divider, Input, Checkbox, Alert } from 'antd';
 import cls from 'classnames';
 import { useRouter } from 'next/router';
 import styles from './styles.module.css';
-import { useLoginMutation, useMeQuery } from '../../generated/graphql';
+import { MeDocument, MeQuery, useLoginMutation } from '../../generated/graphql';
 import { toErrorMap } from '../../../utils/errorMap';
 import { Footer } from '../../components/Footer';
-import { withUrqlClient } from 'next-urql';
-import { createUrqlClient } from '../../../utils/createUrqlClient';
 import { NextPage } from 'next';
 
 interface ILoginProps {
@@ -24,7 +22,7 @@ const Login: NextPage<ILoginProps> = () => {
   const router = useRouter();
   const [form] = Form.useForm();
   const [message, setMessage] = useState<JSX.Element | null>();
-  const [, loginRequest] = useLoginMutation();
+  const [loginRequest, { data, loading }] = useLoginMutation();
 
   const handleGoHomePage = () => {
     router.push('/');
@@ -51,12 +49,26 @@ const Login: NextPage<ILoginProps> = () => {
 
   const handleLogin = async () => {
     const { username, password } = form.getFieldsValue();
-    const resposne = await loginRequest({ username, password });
-    if (resposne.data?.login.accessToken) {
-      await router.push('/');
-    } else if (resposne.data?.login.errors) {
-      const errors = resposne.data.login.errors;
+    await loginRequest({
+      variables: { username, password },
+      update: (cache, { data }) => {
+        cache.writeQuery<MeQuery>({
+          query: MeDocument,
+          data: {
+            me: data?.login.user,
+          },
+        });
+      },
+    });
+    if (loading) {
+      console.log('Loading...');
+    }
+    if (data?.login.accessToken) {
+      router.push('/');
+    } else if (data?.login.errors) {
+      const errors = data.login.errors;
       setErrors({ error: toErrorMap(errors), status: true });
+      console.log('asdfad');
     }
   };
 
@@ -84,7 +96,14 @@ const Login: NextPage<ILoginProps> = () => {
               onFinish={handleLogin}
               form={form}
             >
-              <Form.Item label='Username' required name='username'>
+              <Form.Item
+                label='Username'
+                required
+                name='username'
+                rules={[
+                  { required: true, message: 'Please input your username!' },
+                ]}
+              >
                 <Input style={{ width: '400px' }} size='large' />
               </Form.Item>
               <Form.Item
@@ -92,6 +111,7 @@ const Login: NextPage<ILoginProps> = () => {
                 tooltip='Password must be longer than 8 character'
                 required
                 name='password'
+                rules={[{ required: true, message: 'Please input Passwoard' }]}
               >
                 <Input.Password size='large' style={{ width: '400px' }} />
               </Form.Item>
@@ -136,4 +156,4 @@ const Login: NextPage<ILoginProps> = () => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(Login);
+export default Login;

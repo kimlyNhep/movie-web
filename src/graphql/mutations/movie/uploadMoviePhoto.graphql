@@ -1,0 +1,9 @@
+mutation UploadMoviePhoto($id: String!, $photo: Upload!) {
+  uploadMoviePhoto(id: $id, photo: $photo) {
+    errors {
+      field
+      message
+    }
+    imageUrl
+  }
+}

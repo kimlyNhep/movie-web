@@ -1,14 +1,12 @@
 import { ScrollCard } from '../components/ScrollCard';
 import { LeftSide } from '../components/LeftSide';
 import { Layout } from 'antd';
-import { withUrqlClient } from 'next-urql';
-import { createUrqlClient } from '../../utils/createUrqlClient';
 import MainLayout from '../layout';
 
 const { Content } = Layout;
 
 const Home = () => (
-  <MainLayout pageProps>
+  <MainLayout>
     <Content className='overflow-hidden border-r pr-1'>
       <div>
         <ScrollCard title='Spring Movies 2021' />
@@ -20,4 +18,4 @@ const Home = () => (
   </MainLayout>
 );
 
-export default withUrqlClient(createUrqlClient, { ssr: true })(Home);
+export default Home;

@@ -1,14 +1,10 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions = {};
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+const defaultOptions =  {}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -16,6 +12,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type CreateMovieInformationInput = {
@@ -23,7 +21,7 @@ export type CreateMovieInformationInput = {
   producer?: Maybe<Scalars['String']>;
   episode?: Maybe<Scalars['Int']>;
   status: StatusType;
-  duration?: Maybe<Scalars['Int']>;
+  durations?: Maybe<Scalars['Int']>;
   released_date?: Maybe<Scalars['String']>;
   movie: Scalars['String'];
 };
@@ -31,7 +29,6 @@ export type CreateMovieInformationInput = {
 export type CreateMovieInput = {
   title: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  photo?: Maybe<Scalars['String']>;
   genres: Array<Scalars['String']>;
 };
 
@@ -63,7 +60,7 @@ export type LoginResponse = {
 
 export type Movie = {
   __typename?: 'Movie';
-  id: Scalars['Float'];
+  id: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
   photo: Scalars['String'];
@@ -83,47 +80,66 @@ export type MovieInfo = {
   movie: Movie;
 };
 
+export type MovieInfoResponse = {
+  __typename?: 'MovieInfoResponse';
+  info?: Maybe<MovieInfo>;
+  errors?: Maybe<Array<ErrorResponse>>;
+};
+
 export type MovieResponse = {
   __typename?: 'MovieResponse';
-  message?: Maybe<Scalars['String']>;
+  movie?: Maybe<Movie>;
   errors?: Maybe<Array<ErrorResponse>>;
 };
 
 export enum MovieType {
   Tv = 'TV',
-  Movie = 'MOVIE',
+  Movie = 'MOVIE'
 }
+
+export type MovieUploadResponse = {
+  __typename?: 'MovieUploadResponse';
+  imageUrl?: Maybe<Scalars['String']>;
+  errors?: Maybe<Array<ErrorResponse>>;
+};
 
 export type Mutation = {
   __typename?: 'Mutation';
+  uploadMoviePhoto: MovieUploadResponse;
   createMovie: MovieResponse;
-  createMovieInformation: MovieResponse;
-  addMoviePhoto: Scalars['Boolean'];
+  createMovieInformation: MovieInfoResponse;
   createGenre: GenreResponse;
   register: RegisterResponse;
   login: LoginResponse;
   logout: Scalars['Boolean'];
 };
 
+
+export type MutationUploadMoviePhotoArgs = {
+  photo: Scalars['Upload'];
+  id: Scalars['String'];
+};
+
+
 export type MutationCreateMovieArgs = {
   options: CreateMovieInput;
 };
+
 
 export type MutationCreateMovieInformationArgs = {
   options: CreateMovieInformationInput;
 };
 
-export type MutationAddMoviePhotoArgs = {
-  photo: Upload;
-};
 
 export type MutationCreateGenreArgs = {
   name: Scalars['String'];
 };
 
+
 export type MutationRegisterArgs = {
   options: UserRegisterInput;
 };
+
 
 export type MutationLoginArgs = {
   options: UserLoginInput;
@@ -144,14 +160,9 @@ export type RegisterResponse = {
 
 export enum StatusType {
   Completed = 'COMPLETED',
-  Ongoing = 'ONGOING',
+  Ongoing = 'ONGOING'
 }
 
-export type Upload = {
-  filename: Scalars['String'];
-  mimeType: Scalars['String'];
-  encoding: Scalars['String'];
-};
 
 export type User = {
   __typename?: 'User';
@@ -176,106 +187,142 @@ export type UserRegisterInput = {
 
 export enum UserRoles {
   Admin = 'ADMIN',
-  Member = 'MEMBER',
+  Member = 'MEMBER'
 }
 
-export type ErrorFragmentFragment = { __typename?: 'ErrorResponse' } & Pick<
-  ErrorResponse,
-  'message' | 'field'
->;
+export type ErrorFragmentFragment = (
+  { __typename?: 'ErrorResponse' }
+  & Pick<ErrorResponse, 'message' | 'field'>
+);
 
-export type UserFragmentFragment = { __typename?: 'User' } & Pick<
-  User,
-  'id' | 'username' | 'email' | 'role'
->;
+export type UserFragmentFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'id' | 'username' | 'email' | 'role'>
+);
 
 export type CreateGenreMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
 
-export type CreateGenreMutation = { __typename?: 'Mutation' } & {
-  createGenre: { __typename?: 'GenreResponse' } & Pick<
-    GenreResponse,
-    'message'
-  > & {
-      errors?: Maybe<
-        Array<{ __typename?: 'ErrorResponse' } & ErrorFragmentFragment>
-      >;
-    };
-};
 
-export type GetGenresQueryVariables = Exact<{ [key: string]: never }>;
+export type CreateGenreMutation = (
+  { __typename?: 'Mutation' }
+  & { createGenre: (
+    { __typename?: 'GenreResponse' }
+    & Pick<GenreResponse, 'message'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & ErrorFragmentFragment
+    )>> }
+  ) }
+);
 
-export type GetGenresQuery = { __typename?: 'Query' } & {
-  getGenres: { __typename?: 'GenreResponse' } & {
-    genres?: Maybe<
-      Array<{ __typename?: 'Genre' } & Pick<Genre, 'id' | 'name'>>
-    >;
-  };
-};
+export type GetGenresQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetGenresQuery = (
+  { __typename?: 'Query' }
+  & { getGenres: (
+    { __typename?: 'GenreResponse' }
+    & { genres?: Maybe<Array<(
+      { __typename?: 'Genre' }
+      & Pick<Genre, 'id' | 'name'>
+    )>> }
+  ) }
+);
 
 export type CreateMovieMutationVariables = Exact<{
   title: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  photo?: Maybe<Scalars['String']>;
   genres: Array<Scalars['String']> | Scalars['String'];
 }>;
 
-export type CreateMovieMutation = { __typename?: 'Mutation' } & {
-  createMovie: { __typename?: 'MovieResponse' } & Pick<
-    MovieResponse,
-    'message'
-  > & {
-      errors?: Maybe<
-        Array<{ __typename?: 'ErrorResponse' } & ErrorFragmentFragment>
-      >;
-    };
-};
+
+export type CreateMovieMutation = (
+  { __typename?: 'Mutation' }
+  & { createMovie: (
+    { __typename?: 'MovieResponse' }
+    & { movie?: Maybe<(
+      { __typename?: 'Movie' }
+      & Pick<Movie, 'id' | 'title' | 'description'>
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & ErrorFragmentFragment
+    )>> }
+  ) }
+);
 
 export type CreateMovieInformationMutationVariables = Exact<{
   type: MovieType;
   producer?: Maybe<Scalars['String']>;
-  episode: Scalars['Int'];
+  episode?: Maybe<Scalars['Int']>;
   status: StatusType;
-  duration: Scalars['Int'];
+  durations?: Maybe<Scalars['Int']>;
   releasedDate?: Maybe<Scalars['String']>;
   movie: Scalars['String'];
 }>;
 
-export type CreateMovieInformationMutation = { __typename?: 'Mutation' } & {
-  createMovieInformation: { __typename?: 'MovieResponse' } & Pick<
-    MovieResponse,
-    'message'
-  > & {
-      errors?: Maybe<
-        Array<{ __typename?: 'ErrorResponse' } & ErrorFragmentFragment>
-      >;
-    };
-};
+
+export type CreateMovieInformationMutation = (
+  { __typename?: 'Mutation' }
+  & { createMovieInformation: (
+    { __typename?: 'MovieInfoResponse' }
+    & { info?: Maybe<(
+      { __typename?: 'MovieInfo' }
+      & Pick<MovieInfo, 'id' | 'duration' | 'episode' | 'producer' | 'released_date' | 'status' | 'type'>
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & ErrorFragmentFragment
+    )>> }
+  ) }
+);
+
+export type UploadMoviePhotoMutationVariables = Exact<{
+  id: Scalars['String'];
+  photo: Scalars['Upload'];
+}>;
+
+
+export type UploadMoviePhotoMutation = (
+  { __typename?: 'Mutation' }
+  & { uploadMoviePhoto: (
+    { __typename?: 'MovieUploadResponse' }
+    & Pick<MovieUploadResponse, 'imageUrl'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & Pick<ErrorResponse, 'field' | 'message'>
+    )>> }
+  ) }
+);
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
 }>;
 
-export type LoginMutation = { __typename?: 'Mutation' } & {
-  login: { __typename?: 'LoginResponse' } & Pick<
-    LoginResponse,
-    'accessToken'
-  > & {
-      user?: Maybe<{ __typename?: 'User' } & UserFragmentFragment>;
-      errors?: Maybe<
-        Array<{ __typename?: 'ErrorResponse' } & ErrorFragmentFragment>
-      >;
-    };
-};
 
-export type LogoutMutationVariables = Exact<{ [key: string]: never }>;
+export type LoginMutation = (
+  { __typename?: 'Mutation' }
+  & { login: (
+    { __typename?: 'LoginResponse' }
+    & Pick<LoginResponse, 'accessToken'>
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & UserFragmentFragment
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & ErrorFragmentFragment
+    )>> }
+  ) }
+);
 
-export type LogoutMutation = { __typename?: 'Mutation' } & Pick<
-  Mutation,
-  'logout'
->;
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'logout'>
+);
 
 export type RegisterMutationVariables = Exact<{
   username: Scalars['String'];
@@ -284,52 +331,57 @@ export type RegisterMutationVariables = Exact<{
   role?: Maybe<UserRoles>;
 }>;
 
-export type RegisterMutation = { __typename?: 'Mutation' } & {
-  register: { __typename?: 'RegisterResponse' } & {
-    user?: Maybe<{ __typename?: 'User' } & UserFragmentFragment>;
-    errors?: Maybe<
-      Array<{ __typename?: 'ErrorResponse' } & ErrorFragmentFragment>
-    >;
-  };
-};
 
-export type MeQueryVariables = Exact<{ [key: string]: never }>;
+export type RegisterMutation = (
+  { __typename?: 'Mutation' }
+  & { register: (
+    { __typename?: 'RegisterResponse' }
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & UserFragmentFragment
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & ErrorFragmentFragment
+    )>> }
+  ) }
+);
 
-export type MeQuery = { __typename?: 'Query' } & {
-  me?: Maybe<
-    { __typename?: 'User' } & Pick<User, 'id' | 'username' | 'email' | 'role'>
-  >;
-};
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { me?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username' | 'email' | 'role'>
+  )> }
+);
 
 export const ErrorFragmentFragmentDoc = gql`
-  fragment ErrorFragment on ErrorResponse {
-    message
-    field
-  }
-`;
+    fragment ErrorFragment on ErrorResponse {
+  message
+  field
+}
+    `;
 export const UserFragmentFragmentDoc = gql`
-  fragment UserFragment on User {
-    id
-    username
-    email
-    role
-  }
-`;
+    fragment UserFragment on User {
+  id
+  username
+  email
+  role
+}
+    `;
 export const CreateGenreDocument = gql`
-  mutation CreateGenre($name: String!) {
-    createGenre(name: $name) {
-      message
-      errors {
-        ...ErrorFragment
-      }
+    mutation CreateGenre($name: String!) {
+  createGenre(name: $name) {
+    message
+    errors {
+      ...ErrorFragment
     }
   }
-  ${ErrorFragmentFragmentDoc}
-`;
-export type CreateGenreMutationFn = Apollo.MutationFunction<
-  CreateGenreMutation,
-  CreateGenreMutationVariables
->;
+}
+    ${ErrorFragmentFragmentDoc}`;
+export type CreateGenreMutationFn = Apollo.MutationFunction<CreateGenreMutation, CreateGenreMutationVariables>;
 
 /**
  * __useCreateGenreMutation__
@@ -348,36 +400,23 @@ export type CreateGenreMutationFn = Apollo.MutationFunction<
  *   },
  * });
  */
-export function useCreateGenreMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    CreateGenreMutation,
-    CreateGenreMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<CreateGenreMutation, CreateGenreMutationVariables>(
-    CreateGenreDocument,
-    options
-  );
-}
-export type CreateGenreMutationHookResult = ReturnType<
-  typeof useCreateGenreMutation
->;
-export type CreateGenreMutationResult = Apollo.MutationResult<CreateGenreMutation>;
-export type CreateGenreMutationOptions = Apollo.BaseMutationOptions<
-  CreateGenreMutation,
-  CreateGenreMutationVariables
->;
-export const GetGenresDocument = gql`
-  query GetGenres {
-    getGenres {
-      genres {
-        id
-        name
+export function useCreateGenreMutation(baseOptions?: Apollo.MutationHookOptions<CreateGenreMutation, CreateGenreMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateGenreMutation, CreateGenreMutationVariables>(CreateGenreDocument, options);
       }
+export type CreateGenreMutationHookResult = ReturnType<typeof useCreateGenreMutation>;
+export type CreateGenreMutationResult = Apollo.MutationResult<CreateGenreMutation>;
+export type CreateGenreMutationOptions = Apollo.BaseMutationOptions<CreateGenreMutation, CreateGenreMutationVariables>;
+export const GetGenresDocument = gql`
+    query GetGenres {
+  getGenres {
+    genres {
+      id
+      name
     }
   }
-`;
+}
+    `;
 
 /**
  * __useGetGenresQuery__
@@ -394,62 +433,34 @@ export const GetGenresDocument = gql`
  *   },
  * });
  */
-export function useGetGenresQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetGenresQuery, GetGenresQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetGenresQuery, GetGenresQueryVariables>(
-    GetGenresDocument,
-    options
-  );
-}
-export function useGetGenresLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetGenresQuery,
-    GetGenresQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetGenresQuery, GetGenresQueryVariables>(
-    GetGenresDocument,
-    options
-  );
-}
+export function useGetGenresQuery(baseOptions?: Apollo.QueryHookOptions<GetGenresQuery, GetGenresQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGenresQuery, GetGenresQueryVariables>(GetGenresDocument, options);
+      }
+export function useGetGenresLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGenresQuery, GetGenresQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGenresQuery, GetGenresQueryVariables>(GetGenresDocument, options);
+        }
 export type GetGenresQueryHookResult = ReturnType<typeof useGetGenresQuery>;
-export type GetGenresLazyQueryHookResult = ReturnType<
-  typeof useGetGenresLazyQuery
->;
-export type GetGenresQueryResult = Apollo.QueryResult<
-  GetGenresQuery,
-  GetGenresQueryVariables
->;
+export type GetGenresLazyQueryHookResult = ReturnType<typeof useGetGenresLazyQuery>;
+export type GetGenresQueryResult = Apollo.QueryResult<GetGenresQuery, GetGenresQueryVariables>;
 export const CreateMovieDocument = gql`
-  mutation CreateMovie(
-    $title: String!
-    $description: String
-    $photo: String
-    $genres: [String!]!
+    mutation CreateMovie($title: String!, $description: String, $genres: [String!]!) {
+  createMovie(
+    options: {title: $title, description: $description, genres: $genres}
   ) {
-    createMovie(
-      options: {
-        title: $title
-        description: $description
-        photo: $photo
-        genres: $genres
-      }
-    ) {
-      message
-      errors {
-        ...ErrorFragment
-      }
+    movie {
+      id
+      title
+      description
+    }
+    errors {
+      ...ErrorFragment
     }
   }
-  ${ErrorFragmentFragmentDoc}
-`;
-export type CreateMovieMutationFn = Apollo.MutationFunction<
-  CreateMovieMutation,
-  CreateMovieMutationVariables
->;
+}
+    ${ErrorFragmentFragmentDoc}`;
+export type CreateMovieMutationFn = Apollo.MutationFunction<CreateMovieMutation, CreateMovieMutationVariables>;
 
 /**
  * __useCreateMovieMutation__
@@ -466,64 +477,38 @@ export type CreateMovieMutationFn = Apollo.MutationFunction<
  *   variables: {
  *      title: // value for 'title'
  *      description: // value for 'description'
- *      photo: // value for 'photo'
  *      genres: // value for 'genres'
  *   },
  * });
  */
-export function useCreateMovieMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    CreateMovieMutation,
-    CreateMovieMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<CreateMovieMutation, CreateMovieMutationVariables>(
-    CreateMovieDocument,
-    options
-  );
-}
-export type CreateMovieMutationHookResult = ReturnType<
-  typeof useCreateMovieMutation
->;
+export function useCreateMovieMutation(baseOptions?: Apollo.MutationHookOptions<CreateMovieMutation, CreateMovieMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateMovieMutation, CreateMovieMutationVariables>(CreateMovieDocument, options);
+      }
+export type CreateMovieMutationHookResult = ReturnType<typeof useCreateMovieMutation>;
 export type CreateMovieMutationResult = Apollo.MutationResult<CreateMovieMutation>;
-export type CreateMovieMutationOptions = Apollo.BaseMutationOptions<
-  CreateMovieMutation,
-  CreateMovieMutationVariables
->;
+export type CreateMovieMutationOptions = Apollo.BaseMutationOptions<CreateMovieMutation, CreateMovieMutationVariables>;
 export const CreateMovieInformationDocument = gql`
-  mutation CreateMovieInformation(
-    $type: MovieType!
-    $producer: String
-    $episode: Int!
-    $status: StatusType!
-    $duration: Int!
-    $releasedDate: String
-    $movie: String!
+    mutation CreateMovieInformation($type: MovieType!, $producer: String, $episode: Int, $status: StatusType!, $durations: Int, $releasedDate: String, $movie: String!) {
+  createMovieInformation(
+    options: {type: $type, producer: $producer, episode: $episode, status: $status, durations: $durations, released_date: $releasedDate, movie: $movie}
   ) {
-    createMovieInformation(
-      options: {
-        type: $type
-        producer: $producer
-        episode: $episode
-        status: $status
-        duration: $duration
-        released_date: $releasedDate
-        movie: $movie
-      }
-    ) {
-      message
-      errors {
-        ...ErrorFragment
-      }
+    info {
+      id
+      duration
+      episode
+      producer
+      released_date
+      status
+      type
+    }
+    errors {
+      ...ErrorFragment
     }
   }
-  ${ErrorFragmentFragmentDoc}
-`;
-export type CreateMovieInformationMutationFn = Apollo.MutationFunction<
-  CreateMovieInformationMutation,
-  CreateMovieInformationMutationVariables
->;
+}
+    ${ErrorFragmentFragmentDoc}`;
+export type CreateMovieInformationMutationFn = Apollo.MutationFunction<CreateMovieInformationMutation, CreateMovieInformationMutationVariables>;
 
 /**
  * __useCreateMovieInformationMutation__
@@ -542,51 +527,72 @@ export type CreateMovieInformationMutationFn = Apollo.MutationFunction<
  *      producer: // value for 'producer'
  *      episode: // value for 'episode'
  *      status: // value for 'status'
- *      duration: // value for 'duration'
+ *      durations: // value for 'durations'
  *      releasedDate: // value for 'releasedDate'
  *      movie: // value for 'movie'
  *   },
  * });
  */
-export function useCreateMovieInformationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    CreateMovieInformationMutation,
-    CreateMovieInformationMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<
-    CreateMovieInformationMutation,
-    CreateMovieInformationMutationVariables
-  >(CreateMovieInformationDocument, options);
-}
-export type CreateMovieInformationMutationHookResult = ReturnType<
-  typeof useCreateMovieInformationMutation
->;
+export function useCreateMovieInformationMutation(baseOptions?: Apollo.MutationHookOptions<CreateMovieInformationMutation, CreateMovieInformationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateMovieInformationMutation, CreateMovieInformationMutationVariables>(CreateMovieInformationDocument, options);
+      }
+export type CreateMovieInformationMutationHookResult = ReturnType<typeof useCreateMovieInformationMutation>;
 export type CreateMovieInformationMutationResult = Apollo.MutationResult<CreateMovieInformationMutation>;
-export type CreateMovieInformationMutationOptions = Apollo.BaseMutationOptions<
-  CreateMovieInformationMutation,
-  CreateMovieInformationMutationVariables
->;
+export type CreateMovieInformationMutationOptions = Apollo.BaseMutationOptions<CreateMovieInformationMutation, CreateMovieInformationMutationVariables>;
+export const UploadMoviePhotoDocument = gql`
+    mutation UploadMoviePhoto($id: String!, $photo: Upload!) {
+  uploadMoviePhoto(id: $id, photo: $photo) {
+    errors {
+      field
+      message
+    }
+    imageUrl
+  }
+}
+    `;
+export type UploadMoviePhotoMutationFn = Apollo.MutationFunction<UploadMoviePhotoMutation, UploadMoviePhotoMutationVariables>;
+
+/**
+ * __useUploadMoviePhotoMutation__
+ *
+ * To run a mutation, you first call `useUploadMoviePhotoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadMoviePhotoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadMoviePhotoMutation, { data, loading, error }] = useUploadMoviePhotoMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      photo: // value for 'photo'
+ *   },
+ * });
+ */
+export function useUploadMoviePhotoMutation(baseOptions?: Apollo.MutationHookOptions<UploadMoviePhotoMutation, UploadMoviePhotoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadMoviePhotoMutation, UploadMoviePhotoMutationVariables>(UploadMoviePhotoDocument, options);
+      }
+export type UploadMoviePhotoMutationHookResult = ReturnType<typeof useUploadMoviePhotoMutation>;
+export type UploadMoviePhotoMutationResult = Apollo.MutationResult<UploadMoviePhotoMutation>;
+export type UploadMoviePhotoMutationOptions = Apollo.BaseMutationOptions<UploadMoviePhotoMutation, UploadMoviePhotoMutationVariables>;
 export const LoginDocument = gql`
-  mutation Login($username: String!, $password: String!) {
-    login(options: { username: $username, password: $password }) {
-      accessToken
-      user {
-        ...UserFragment
-      }
-      errors {
-        ...ErrorFragment
-      }
+    mutation Login($username: String!, $password: String!) {
+  login(options: {username: $username, password: $password}) {
+    accessToken
+    user {
+      ...UserFragment
+    }
+    errors {
+      ...ErrorFragment
     }
   }
-  ${UserFragmentFragmentDoc}
-  ${ErrorFragmentFragmentDoc}
-`;
-export type LoginMutationFn = Apollo.MutationFunction<
-  LoginMutation,
-  LoginMutationVariables
->;
+}
+    ${UserFragmentFragmentDoc}
+${ErrorFragmentFragmentDoc}`;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
  * __useLoginMutation__
@@ -606,33 +612,19 @@ export type LoginMutationFn = Apollo.MutationFunction<
  *   },
  * });
  */
-export function useLoginMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    LoginMutation,
-    LoginMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<LoginMutation, LoginMutationVariables>(
-    LoginDocument,
-    options
-  );
-}
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
+      }
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
-export type LoginMutationOptions = Apollo.BaseMutationOptions<
-  LoginMutation,
-  LoginMutationVariables
->;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const LogoutDocument = gql`
-  mutation Logout {
-    logout
-  }
-`;
-export type LogoutMutationFn = Apollo.MutationFunction<
-  LogoutMutation,
-  LogoutMutationVariables
->;
+    mutation Logout {
+  logout
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
 
 /**
  * __useLogoutMutation__
@@ -650,54 +642,29 @@ export type LogoutMutationFn = Apollo.MutationFunction<
  *   },
  * });
  */
-export function useLogoutMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    LogoutMutation,
-    LogoutMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(
-    LogoutDocument,
-    options
-  );
-}
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+      }
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
-export type LogoutMutationOptions = Apollo.BaseMutationOptions<
-  LogoutMutation,
-  LogoutMutationVariables
->;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const RegisterDocument = gql`
-  mutation Register(
-    $username: String!
-    $email: String!
-    $password: String!
-    $role: UserRoles
+    mutation Register($username: String!, $email: String!, $password: String!, $role: UserRoles) {
+  register(
+    options: {email: $email, username: $username, password: $password, role: $role}
   ) {
-    register(
-      options: {
-        email: $email
-        username: $username
-        password: $password
-        role: $role
-      }
-    ) {
-      user {
-        ...UserFragment
-      }
-      errors {
-        ...ErrorFragment
-      }
+    user {
+      ...UserFragment
+    }
+    errors {
+      ...ErrorFragment
     }
   }
-  ${UserFragmentFragmentDoc}
-  ${ErrorFragmentFragmentDoc}
-`;
-export type RegisterMutationFn = Apollo.MutationFunction<
-  RegisterMutation,
-  RegisterMutationVariables
->;
+}
+    ${UserFragmentFragmentDoc}
+${ErrorFragmentFragmentDoc}`;
+export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
 
 /**
  * __useRegisterMutation__
@@ -719,34 +686,23 @@ export type RegisterMutationFn = Apollo.MutationFunction<
  *   },
  * });
  */
-export function useRegisterMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    RegisterMutation,
-    RegisterMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(
-    RegisterDocument,
-    options
-  );
-}
+export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
+      }
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
-export type RegisterMutationOptions = Apollo.BaseMutationOptions<
-  RegisterMutation,
-  RegisterMutationVariables
->;
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const MeDocument = gql`
-  query Me {
-    me {
-      id
-      username
-      email
-      role
-    }
+    query Me {
+  me {
+    id
+    username
+    email
+    role
   }
-`;
+}
+    `;
 
 /**
  * __useMeQuery__
@@ -763,18 +719,14 @@ export const MeDocument = gql`
  *   },
  * });
  */
-export function useMeQuery(
-  baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
-}
-export function useMeLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
-}
+export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+      }
+export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+        }
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;

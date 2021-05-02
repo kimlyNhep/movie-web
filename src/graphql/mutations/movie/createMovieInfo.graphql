@@ -1,9 +1,9 @@
 mutation CreateMovieInformation(
   $type: MovieType!
   $producer: String
-  $episode: Int!
+  $episode: Int
   $status: StatusType!
-  $duration: Int!
+  $durations: Int
   $releasedDate: String
   $movie: String!
 ) {
@@ -13,12 +13,20 @@ mutation CreateMovieInformation(
       producer: $producer
       episode: $episode
       status: $status
-      duration: $duration
+      durations: $durations
       released_date: $releasedDate
       movie: $movie
     }
   ) {
-    message
+    info {
+      id
+      duration
+      episode
+      producer
+      released_date
+      status
+      type
+    }
     errors {
       ...ErrorFragment
     }

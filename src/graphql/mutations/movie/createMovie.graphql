@@ -1,18 +1,16 @@
 mutation CreateMovie(
   $title: String!
   $description: String
-  $photo: String
   $genres: [String!]!
 ) {
   createMovie(
-    options: {
-      title: $title
-      description: $description
-      photo: $photo
-      genres: $genres
-    }
+    options: { title: $title, description: $description, genres: $genres }
   ) {
-    message
+    movie {
+      id
+      title
+      description
+    }
     errors {
       ...ErrorFragment
     }

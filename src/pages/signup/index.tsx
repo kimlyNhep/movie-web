@@ -6,7 +6,6 @@ import styles from './styles.module.css';
 import { toErrorMap } from '../../../utils/errorMap';
 import { Footer } from '../../components/Footer';
 import { useRegisterMutation } from '../../generated/graphql';
-// import { useMutation } from '@apollo/client';
 
 interface IRegisterProps {}
 
@@ -19,7 +18,7 @@ const Signup: React.FC<IRegisterProps> = () => {
   const router = useRouter();
   const [errors, setErrors] = useState<IErrorState>();
   const [message, setMessage] = useState<JSX.Element | null>();
-  const [, registerRequest] = useRegisterMutation();
+  const [registerRequest, { data }] = useRegisterMutation();
 
   const hanldeGoHomePage = () => {
     router.push('/');
@@ -31,12 +30,14 @@ const Signup: React.FC<IRegisterProps> = () => {
 
   const handleCreateAccount = async (values: any) => {
     const { username, email, password } = values;
-    const response = await registerRequest({ username, email, password });
+    await registerRequest({
+      variables: { username, email, password },
+    });
 
-    if (response.data?.register.user) {
+    if (data?.register.user) {
       router.push('/');
-    } else if (response.data?.register.errors) {
-      const errors = response.data?.register.errors;
+    } else if (data?.register.errors) {
+      const errors = data?.register.errors;
       setErrors({ error: toErrorMap(errors), status: true });
     }
   };

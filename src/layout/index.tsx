@@ -11,19 +11,22 @@ import { Navbar } from '../components/Navbar';
 import { LoginSvg } from '../components/svg';
 import { Footer } from '../components/Footer';
 import styles from './styles.module.css';
-import { useLogoutMutation, useMeQuery } from '../generated/graphql';
+import {
+  MeDocument,
+  MeQuery,
+  useLogoutMutation,
+  useMeQuery,
+} from '../generated/graphql';
 import { useRouter } from 'next/router';
 import { Spin } from 'antd';
-import { withUrqlClient } from 'next-urql';
-import { createUrqlClient } from '../../utils/createUrqlClient';
 
 interface ILayoutProps {
   classname?: string;
 }
 
 const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
-  const [{ data, fetching }] = useMeQuery();
-  const [, logoutRequest] = useLogoutMutation();
+  const { data, loading } = useMeQuery();
+  const [logoutRequest] = useLogoutMutation();
   const router = useRouter();
 
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -72,7 +75,16 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
   };
 
   const handleLogOut = async () => {
-    const response = await logoutRequest();
+    const response = await logoutRequest({
+      update: (cache) => {
+        cache.writeQuery<MeQuery>({
+          query: MeDocument,
+          data: {
+            me: null,
+          },
+        });
+      },
+    });
   };
 
   const menu = <Menu onClick={handleMenuClick}>{body}</Menu>;
@@ -97,7 +109,7 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
                 {data?.me?.username}
               </Button>
             )}
-            {fetching && <Spin indicator={antIcon} />}
+            {loading && <Spin indicator={antIcon} />}
             <Dropdown overlay={menu} placement='bottomCenter' arrow>
               <UserOutlined style={{ fontSize: '25px' }} />
             </Dropdown>
@@ -113,4 +125,4 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(MainLayout);
+export default MainLayout;
