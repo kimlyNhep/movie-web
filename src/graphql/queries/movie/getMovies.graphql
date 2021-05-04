@@ -1,0 +1,33 @@
+query GetMovies {
+  getMovies {
+    errors {
+      field
+      message
+    }
+    movies {
+      creator {
+        email
+        username
+        id
+        role
+      }
+      genres {
+        name
+        id
+      }
+      description
+      photo
+      title
+      id
+      info {
+        id
+        duration
+        episode
+        producer
+        released_date
+        status
+        type
+      }
+    }
+  }
+}

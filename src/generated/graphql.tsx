@@ -42,6 +42,7 @@ export type Genre = {
   __typename?: 'Genre';
   id: Scalars['String'];
   name: Scalars['String'];
+  movies?: Maybe<Array<Movie>>;
 };
 
 export type GenreResponse = {
@@ -67,10 +68,11 @@ export type Movie = {
   __typename?: 'Movie';
   id: Scalars['String'];
   title: Scalars['String'];
-  description: Scalars['String'];
-  photo: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  photo?: Maybe<Scalars['String']>;
   creator: User;
   info?: Maybe<MovieInfo>;
+  genres: Array<Genre>;
 };
 
 export type MovieInfo = {
@@ -78,9 +80,9 @@ export type MovieInfo = {
   id: Scalars['String'];
   type: Scalars['String'];
   producer?: Maybe<Scalars['String']>;
-  episode: Scalars['Int'];
+  episode?: Maybe<Scalars['Int']>;
   status: StatusType;
-  duration: Scalars['Int'];
+  duration?: Maybe<Scalars['Int']>;
   released_date?: Maybe<Scalars['String']>;
   movie: Movie;
 };
@@ -108,31 +110,27 @@ export type MovieUploadResponse = {
   errors?: Maybe<Array<ErrorResponse>>;
 };
 
+export type MoviesResponse = {
+  __typename?: 'MoviesResponse';
+  movies?: Maybe<Array<Movie>>;
+  errors?: Maybe<Array<ErrorResponse>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   uploadMoviePhoto: MovieUploadResponse;
-  createMovie: MovieResponse;
-  createMovieInformation: MovieInfoResponse;
   createGenre: GenreResponse;
   register: RegisterResponse;
   login: LoginResponse;
   logout: Scalars['Boolean'];
+  createMovie: MovieResponse;
+  createMovieInformation: MovieInfoResponse;
 };
 
 
 export type MutationUploadMoviePhotoArgs = {
   photo: Scalars['Upload'];
   id: Scalars['String'];
-};
-
-
-export type MutationCreateMovieArgs = {
-  options: CreateMovieInput;
-};
-
-
-export type MutationCreateMovieInformationArgs = {
-  options: CreateMovieInformationInput;
 };
 
 
@@ -150,11 +148,28 @@ export type MutationLoginArgs = {
   options: UserLoginInput;
 };
 
+
+export type MutationCreateMovieArgs = {
+  options: CreateMovieInput;
+};
+
+
+export type MutationCreateMovieInformationArgs = {
+  options: CreateMovieInformationInput;
+};
+
 export type Query = {
   __typename?: 'Query';
-  test?: Maybe<User>;
   getGenres: GenresResponse;
   me?: Maybe<User>;
+  test?: Maybe<User>;
+  getMovie: MovieResponse;
+  getMovies: MoviesResponse;
+};
+
+
+export type QueryGetMovieArgs = {
+  id: Scalars['String'];
 };
 
 export type RegisterResponse = {
@@ -352,6 +367,62 @@ export type RegisterMutation = (
     )>, errors?: Maybe<Array<(
       { __typename?: 'ErrorResponse' }
       & ErrorFragmentFragment
+    )>> }
+  ) }
+);
+
+export type GetMovieQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetMovieQuery = (
+  { __typename?: 'Query' }
+  & { getMovie: (
+    { __typename?: 'MovieResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & Pick<ErrorResponse, 'field' | 'message'>
+    )>>, movie?: Maybe<(
+      { __typename?: 'Movie' }
+      & Pick<Movie, 'id' | 'description' | 'title' | 'photo'>
+      & { creator: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'email' | 'role'>
+      ), genres: Array<(
+        { __typename?: 'Genre' }
+        & Pick<Genre, 'id' | 'name'>
+      )>, info?: Maybe<(
+        { __typename?: 'MovieInfo' }
+        & Pick<MovieInfo, 'id' | 'duration' | 'episode' | 'producer' | 'released_date' | 'status' | 'type'>
+      )> }
+    )> }
+  ) }
+);
+
+export type GetMoviesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMoviesQuery = (
+  { __typename?: 'Query' }
+  & { getMovies: (
+    { __typename?: 'MoviesResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & Pick<ErrorResponse, 'field' | 'message'>
+    )>>, movies?: Maybe<Array<(
+      { __typename?: 'Movie' }
+      & Pick<Movie, 'description' | 'photo' | 'title' | 'id'>
+      & { creator: (
+        { __typename?: 'User' }
+        & Pick<User, 'email' | 'username' | 'id' | 'role'>
+      ), genres: Array<(
+        { __typename?: 'Genre' }
+        & Pick<Genre, 'name' | 'id'>
+      )>, info?: Maybe<(
+        { __typename?: 'MovieInfo' }
+        & Pick<MovieInfo, 'id' | 'duration' | 'episode' | 'producer' | 'released_date' | 'status' | 'type'>
+      )> }
     )>> }
   ) }
 );
@@ -710,6 +781,131 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const GetMovieDocument = gql`
+    query GetMovie($id: String!) {
+  getMovie(id: $id) {
+    errors {
+      field
+      message
+    }
+    movie {
+      id
+      description
+      title
+      photo
+      creator {
+        id
+        username
+        email
+        role
+      }
+      genres {
+        id
+        name
+      }
+      info {
+        id
+        duration
+        episode
+        producer
+        released_date
+        status
+        type
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMovieQuery__
+ *
+ * To run a query within a React component, call `useGetMovieQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMovieQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMovieQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetMovieQuery(baseOptions: Apollo.QueryHookOptions<GetMovieQuery, GetMovieQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMovieQuery, GetMovieQueryVariables>(GetMovieDocument, options);
+      }
+export function useGetMovieLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMovieQuery, GetMovieQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMovieQuery, GetMovieQueryVariables>(GetMovieDocument, options);
+        }
+export type GetMovieQueryHookResult = ReturnType<typeof useGetMovieQuery>;
+export type GetMovieLazyQueryHookResult = ReturnType<typeof useGetMovieLazyQuery>;
+export type GetMovieQueryResult = Apollo.QueryResult<GetMovieQuery, GetMovieQueryVariables>;
+export const GetMoviesDocument = gql`
+    query GetMovies {
+  getMovies {
+    errors {
+      field
+      message
+    }
+    movies {
+      creator {
+        email
+        username
+        id
+        role
+      }
+      genres {
+        name
+        id
+      }
+      description
+      photo
+      title
+      id
+      info {
+        id
+        duration
+        episode
+        producer
+        released_date
+        status
+        type
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMoviesQuery__
+ *
+ * To run a query within a React component, call `useGetMoviesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMoviesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMoviesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMoviesQuery(baseOptions?: Apollo.QueryHookOptions<GetMoviesQuery, GetMoviesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMoviesQuery, GetMoviesQueryVariables>(GetMoviesDocument, options);
+      }
+export function useGetMoviesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMoviesQuery, GetMoviesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMoviesQuery, GetMoviesQueryVariables>(GetMoviesDocument, options);
+        }
+export type GetMoviesQueryHookResult = ReturnType<typeof useGetMoviesQuery>;
+export type GetMoviesLazyQueryHookResult = ReturnType<typeof useGetMoviesLazyQuery>;
+export type GetMoviesQueryResult = Apollo.QueryResult<GetMoviesQuery, GetMoviesQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

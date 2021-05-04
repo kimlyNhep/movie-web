@@ -1,0 +1,33 @@
+query GetMovie($id: String!) {
+  getMovie(id: $id) {
+    errors {
+      field
+      message
+    }
+    movie {
+      id
+      description
+      title
+      photo
+      creator {
+        id
+        username
+        email
+        role
+      }
+      genres {
+        id
+        name
+      }
+      info {
+        id
+        duration
+        episode
+        producer
+        released_date
+        status
+        type
+      }
+    }
+  }
+}

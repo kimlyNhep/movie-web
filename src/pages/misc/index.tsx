@@ -3,7 +3,7 @@ import { Upload, message, Button } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { useUploadMoviePhotoMutation } from '../generated/graphql';
+import { useUploadMoviePhotoMutation } from '../../generated/graphql';
 
 function beforeUpload(file: Blob) {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';

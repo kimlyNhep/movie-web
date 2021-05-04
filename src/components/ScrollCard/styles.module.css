@@ -5,7 +5,7 @@
 }
 
 .wrapper .item {
-  min-width: 160px;
+  width: 160px;
   height: 220px;
   text-align: center;
   background-color: #ddd;
