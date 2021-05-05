@@ -22,7 +22,7 @@ const Login: NextPage<ILoginProps> = () => {
   const router = useRouter();
   const [form] = Form.useForm();
   const [message, setMessage] = useState<JSX.Element | null>();
-  const [loginRequest, { data, loading }] = useLoginMutation();
+  const [loginRequest, { loading }] = useLoginMutation();
 
   const handleGoHomePage = () => {
     router.push('/');
@@ -49,7 +49,7 @@ const Login: NextPage<ILoginProps> = () => {
 
   const handleLogin = async () => {
     const { username, password } = form.getFieldsValue();
-    await loginRequest({
+    const response = await loginRequest({
       variables: { username, password },
       update: (cache, { data }) => {
         cache.writeQuery<MeQuery>({
@@ -63,10 +63,10 @@ const Login: NextPage<ILoginProps> = () => {
     if (loading) {
       console.log('Loading...');
     }
-    if (data?.login.accessToken) {
+    if (response.data?.login.user) {
       router.push('/');
-    } else if (data?.login.errors) {
-      const errors = data.login.errors;
+    } else if (response.data?.login.errors) {
+      const errors = response.data.login.errors;
       setErrors({ error: toErrorMap(errors), status: true });
       console.log('asdfad');
     }

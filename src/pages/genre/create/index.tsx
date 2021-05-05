@@ -1,8 +1,7 @@
-import { Divider, Form, Input, Select, Button, Alert } from 'antd';
+import { Divider, Form, Input, Button, Alert } from 'antd';
 import { useCreateGenreMutation } from '../../../generated/graphql';
 import Layout from '../../../layout';
-import moment, { Moment } from 'moment';
-import { toErrorMap } from '../../../../utils/errorMap';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 
 interface IGenreForm {
@@ -21,11 +20,11 @@ const CreateMovie: React.FC = () => {
 
   const [form] = Form.useForm();
   const layout = {
-    labelCol: { span: 10 },
-    wrapperCol: { span: 8 },
+    labelCol: { span: 2 },
+    wrapperCol: { span: 16 },
   };
   const tailLayout = {
-    wrapperCol: { offset: 10, span: 16 },
+    wrapperCol: { offset: 2, span: 16 },
   };
 
   const format = 'HH:mm';
@@ -39,7 +38,7 @@ const CreateMovie: React.FC = () => {
           name,
         },
         // update: (cache, { data }) => {
-        //   const existingGenres: GetGenresQuery | null = cache.readQuery({
+        //   const existingGenres = cache.readQuery<GetGenresQuery>({
         //     query: GetGenresDocument,
         //   });
 
@@ -49,7 +48,7 @@ const CreateMovie: React.FC = () => {
         //       getGenres: {
         //         genres: [
         //           ...existingGenres?.getGenres.genres,
-        //           data?.createGenre.genre,
+        //           data?.createGenre.genre!,
         //         ],
         //       },
         //     },
@@ -88,11 +87,14 @@ const CreateMovie: React.FC = () => {
 
   return (
     <Layout>
-      <div className='flex flex-col'>
-        <span>New Genre</span>
-        <Divider
-          style={{ width: '100%', marginTop: '0.5rem', background: 'grey' }}
-        />
+      <div className='flex flex-col w-full'>
+        <div className='flex flex-col w-full'>
+          <span>New Genre</span>
+
+          <Divider
+            style={{ width: '100%', marginTop: '0.5rem', background: 'grey' }}
+          />
+        </div>
         <Form
           {...layout}
           form={form}
@@ -113,7 +115,7 @@ const CreateMovie: React.FC = () => {
           </Form.Item>
           <Form.Item {...tailLayout}>
             <Button size='small' type='primary' htmlType='submit'>
-              Create New Genre
+              Create New
             </Button>
           </Form.Item>
         </Form>

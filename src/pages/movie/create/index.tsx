@@ -23,6 +23,7 @@ import { toErrorMap } from '../../../../utils/errorMap';
 import { useEffect, useState } from 'react';
 import { UploadDropZone } from '../../../components/Upload';
 import { useRouter } from 'next/router';
+import { IMovieType } from '../../../types/movie';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -47,11 +48,7 @@ interface IErrorState {
 
 const CreateMovie: React.FC = () => {
   const [current, setCurrent] = useState(0);
-  const [movie, setMovie] = useState<{
-    id: string;
-    title: string;
-    description: string;
-  }>();
+  const [movie, setMovie] = useState<IMovieType>();
   const { data } = useGetGenresQuery();
   const [message, setMessage] = useState<JSX.Element | null>();
   const [errors, setErrors] = useState<IErrorState>();
@@ -90,7 +87,7 @@ const CreateMovie: React.FC = () => {
       const errors = response.data.createMovie.errors;
       setErrors({ error: toErrorMap(errors), status: true });
     } else if (response.data?.createMovie.movie) {
-      setMovie(response.data.createMovie.movie);
+      setMovie(response.data.createMovie.movie as IMovieType);
       setCurrent(current + 1);
     }
   };
@@ -116,7 +113,7 @@ const CreateMovie: React.FC = () => {
   const handleAddInformation = async (values: IMovieForm) => {
     const { type, producer, episode, status, durations, releasedDate } = values;
 
-    const time = durations?.unix();
+    const time = durations?.diff(moment().startOf('day'), 'seconds');
     const date = releasedDate?.format('l');
 
     if (movie) {
@@ -284,9 +281,9 @@ const CreateMovie: React.FC = () => {
     setCurrent(current + 1);
   };
 
-  const prev = () => {
-    setCurrent(current - 1);
-  };
+  // const prev = () => {
+  //   setCurrent(current - 1);
+  // };
 
   return (
     <Layout>
@@ -305,7 +302,7 @@ const CreateMovie: React.FC = () => {
               Done
             </Button>
           )}
-          {current > 0 && (
+          {/* {current > 0 && (
             <Button
               style={{ margin: '0 8px' }}
               onClick={() => prev()}
@@ -313,7 +310,7 @@ const CreateMovie: React.FC = () => {
             >
               Previous
             </Button>
-          )}
+          )} */}
           {current === 1 &&
             (selectedFile ? (
               <Button

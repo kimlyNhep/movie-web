@@ -5,7 +5,11 @@ import { useRouter } from 'next/router';
 import styles from './styles.module.css';
 import { toErrorMap } from '../../../utils/errorMap';
 import { Footer } from '../../components/Footer';
-import { useRegisterMutation } from '../../generated/graphql';
+import {
+  MeDocument,
+  MeQuery,
+  useRegisterMutation,
+} from '../../generated/graphql';
 
 interface IRegisterProps {}
 
@@ -20,8 +24,8 @@ const Signup: React.FC<IRegisterProps> = () => {
   const [message, setMessage] = useState<JSX.Element | null>();
   const [registerRequest, { data }] = useRegisterMutation();
 
-  const hanldeGoHomePage = () => {
-    router.push('/');
+  const hanldeGoHomePage = async () => {
+    await router.push('/');
   };
 
   const handleLoginPage = () => {
@@ -32,13 +36,23 @@ const Signup: React.FC<IRegisterProps> = () => {
     const { username, email, password } = values;
     await registerRequest({
       variables: { username, email, password },
+      update: (cache, { data }) => {
+        cache.writeQuery<MeQuery>({
+          query: MeDocument,
+          data: {
+            me: data?.register.user,
+          },
+        });
+      },
     });
 
-    if (data?.register.user) {
+    if (data?.register.user?.username) {
       router.push('/');
     } else if (data?.register.errors) {
       const errors = data?.register.errors;
       setErrors({ error: toErrorMap(errors), status: true });
+    } else {
+      console.log('Something went wrong');
     }
   };
 
@@ -82,10 +96,22 @@ const Signup: React.FC<IRegisterProps> = () => {
             onFinish={handleCreateAccount}
             // onFinishFailed={onFinishFailed}
           >
-            <Form.Item label='Username' required name='username'>
+            <Form.Item
+              label='Username'
+              required
+              name='username'
+              rules={[
+                { required: true, message: 'Please insert the username' },
+              ]}
+            >
               <Input style={{ width: '400px' }} size='large' />
             </Form.Item>
-            <Form.Item label='Email' required name='email'>
+            <Form.Item
+              label='Email'
+              required
+              name='email'
+              rules={[{ required: true, message: 'Please insert the email' }]}
+            >
               <Input size='large' style={{ width: '400px' }} />
             </Form.Item>
             <Form.Item
@@ -93,6 +119,7 @@ const Signup: React.FC<IRegisterProps> = () => {
               name='password'
               tooltip='Password must be longer than 8 character'
               required
+              rules={[{ required: true, message: 'Please insert password' }]}
             >
               <Input.Password size='large' style={{ width: '400px' }} />
             </Form.Item>

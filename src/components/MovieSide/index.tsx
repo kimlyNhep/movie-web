@@ -8,8 +8,6 @@ interface IMovieSideProps {
 }
 
 export const MovieSide: React.FC<IMovieSideProps> = ({ movie }) => {
-  console.log(movie);
-
   return (
     <div className={styles.profileSide}>
       <Image className={styles.photo} src={movie?.photo} preview={false} />

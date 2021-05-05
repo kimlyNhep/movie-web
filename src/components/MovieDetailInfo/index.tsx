@@ -1,9 +1,9 @@
 import { Divider } from 'antd';
 import { IMovieInfoType } from '../../types/movie';
 import moment from 'moment';
-const momentDurationFormatSetup = require('moment-duration-format');
+import momentDurationFormatSetup from 'moment-duration-format';
 
-momentDurationFormatSetup(moment);
+momentDurationFormatSetup(moment as any);
 
 interface IMovieInfoProps {
   info?: IMovieInfoType;
@@ -12,7 +12,7 @@ interface IMovieInfoProps {
 export const MovieDetailInfo: React.FC<IMovieInfoProps> = ({ info }) => {
   console.log(info);
 
-  const durations = moment.duration(info?.duration, 'seconds').format('h:mm');
+  const durations = moment.duration(info?.duration, 'seconds').format('hh:mm');
 
   return (
     <div>
