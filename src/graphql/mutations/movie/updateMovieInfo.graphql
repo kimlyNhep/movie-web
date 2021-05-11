@@ -1,0 +1,36 @@
+mutation UpdateMovieInformation(
+  $id: String!
+  $type: MovieType!
+  $producer: String
+  $episode: Int
+  $status: StatusType!
+  $durations: Int
+  $releasedDate: String
+  $movie: String!
+) {
+  updateMovieInfo(
+    options: {
+      id: $id
+      type: $type
+      producer: $producer
+      episode: $episode
+      status: $status
+      durations: $durations
+      released_date: $releasedDate
+      movie: $movie
+    }
+  ) {
+    info {
+      id
+      duration
+      episode
+      producer
+      released_date
+      status
+      type
+    }
+    errors {
+      ...ErrorFragment
+    }
+  }
+}

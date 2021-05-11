@@ -1,9 +1,12 @@
 import { Button, Divider } from 'antd';
 import { useRouter } from 'next/router';
 import { ProfileSide } from '../../components/ProfileSide';
+import { useMeQuery } from '../../generated/graphql';
 import Layout from '../../layout';
+import { IUserType } from '../../types/user';
 
 const ProfileDetail = () => {
+  const { data, loading } = useMeQuery();
   const router = useRouter();
 
   const handleAddMovie = () => {
@@ -16,7 +19,7 @@ const ProfileDetail = () => {
 
   return (
     <Layout>
-      <ProfileSide></ProfileSide>
+      <ProfileSide profile={data?.me as IUserType} />
       <Divider type='vertical' style={{ height: '300px' }}></Divider>
       <Button size='small' onClick={handleAddMovie}>
         Add Movie

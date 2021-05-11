@@ -5,17 +5,18 @@ import {
   InputNumber,
   DatePicker,
   Button,
-  Slider,
   Alert,
   Steps,
+  Slider,
 } from 'antd';
 import {
   MovieType,
   StatusType,
-  useCreateMovieInformationMutation,
-  useCreateMovieMutation,
   useGetCharactersQuery,
   useGetGenresQuery,
+  useGetMovieQuery,
+  useUpdateMovieInformationMutation,
+  useUpdateMovieMutation,
   useUploadMoviePhotoMutation,
 } from '../../../generated/graphql';
 import Layout from '../../../layout';
@@ -38,8 +39,8 @@ interface IMovieForm {
   producer?: string;
   episode?: number;
   status: StatusType;
-  minuate?: number;
   hour?: number;
+  minuate?: number;
   releasedDate?: Moment;
 }
 
@@ -56,6 +57,13 @@ const CreateMovie: React.FC = () => {
   const [message, setMessage] = useState<JSX.Element | null>();
   const [errors, setErrors] = useState<IErrorState>();
   const router = useRouter();
+  const id = router.query.id as string;
+
+  const movieQuery = useGetMovieQuery({
+    variables: {
+      id,
+    },
+  });
   const [selectedFile, setSelectedFile] = useState<
     | {
         preview: string;
@@ -66,11 +74,11 @@ const CreateMovie: React.FC = () => {
     uploadMoviePhoto,
     { loading: photoLoading },
   ] = useUploadMoviePhotoMutation();
-  const [createMovieInfoRequest] = useCreateMovieInformationMutation();
+  const [updateMovieInfoRequest] = useUpdateMovieInformationMutation();
   const [
-    createMovieRequest,
+    updateMovieRequest,
     { loading: movieLoading },
-  ] = useCreateMovieMutation();
+  ] = useUpdateMovieMutation();
 
   const [form] = Form.useForm();
 
@@ -86,38 +94,22 @@ const CreateMovie: React.FC = () => {
 
   const format = 'HH:mm';
 
-  const marks = {
-    0: '1',
-    15: '15',
-    30: '30',
-    45: '45',
-    59: '59',
-  };
-
-  const markHour = {
-    0: '0',
-    1: '1',
-    2: '2',
-    3: '3',
-    4: '4',
-    5: '5',
-  };
-
   const handleAddMovie = async (values: IMovieForm) => {
     const { title, description, genres } = values;
-    const response = await createMovieRequest({
+    const response = await updateMovieRequest({
       variables: {
+        id,
         title,
         description,
         genres,
       },
     });
 
-    if (response.data?.createMovie.errors) {
-      const errors = response.data.createMovie.errors;
+    if (response.data?.updateMovie.errors) {
+      const errors = response.data.updateMovie.errors;
       setErrors({ error: toErrorMap(errors), status: true });
-    } else if (response.data?.createMovie.movie) {
-      setMovie(response.data.createMovie.movie as IMovieType);
+    } else if (response.data?.updateMovie.movie) {
+      setMovie(response.data.updateMovie.movie as IMovieType);
       setCurrent(current + 1);
     }
   };
@@ -126,7 +118,7 @@ const CreateMovie: React.FC = () => {
     if (movie) {
       const response = await uploadMoviePhoto({
         variables: {
-          id: movie!.id,
+          id,
           photo: selectedFile,
         },
       });
@@ -140,23 +132,25 @@ const CreateMovie: React.FC = () => {
     }
   };
 
-  const handleAddInformation = async (values: IMovieForm) => {
+  const handleUpdateInformation = async (values: IMovieForm) => {
     const {
       type,
       producer,
-      minuate,
-      hour,
       episode,
       status,
+      minuate,
+      hour,
       releasedDate,
     } = values;
 
     const time = minuate! * 60 + hour! * 60 * 60;
+
     const date = releasedDate?.format('l');
 
-    if (movie) {
-      const response = await createMovieInfoRequest({
+    if (movie?.info) {
+      const response = await updateMovieInfoRequest({
         variables: {
+          id: movie.info.id,
           type,
           producer,
           episode,
@@ -167,13 +161,61 @@ const CreateMovie: React.FC = () => {
         },
       });
 
-      if (response.data?.createMovieInformation.errors) {
-        const errors = response.data.createMovieInformation.errors;
+      if (response.data?.updateMovieInfo.errors) {
+        const errors = response.data.updateMovieInfo.errors;
         setErrors({ error: toErrorMap(errors), status: true });
-      } else if (response.data?.createMovieInformation.info) {
+      } else if (response.data?.updateMovieInfo.info) {
         router.push('/');
       }
     }
+  };
+
+  useEffect(() => {
+    const movie = movieQuery?.data?.getMovie.movie;
+
+    setMovie(movie as IMovieType);
+
+    let min = movie?.info?.duration! / 60;
+    let hour = 0;
+    if (min > 60) {
+      hour++;
+      min = min - 60;
+    }
+
+    form.setFieldsValue({
+      title: movie?.title,
+      description: movie?.description,
+      genres: movie?.genres.map((genre) => genre.id),
+      type: movie?.info?.type.toUpperCase(),
+      producer: movie?.info?.producer,
+      episode: movie?.info?.episode,
+      status: movie?.info?.status.toUpperCase(),
+      hour: hour,
+      minuate: min,
+      releasedDate: moment(movie?.info?.released_date),
+      characters: movie?.info?.characters?.map((character) => character.id),
+    });
+
+    setSelectedFile({
+      preview: movie?.photo as string,
+    });
+  }, [movieQuery.data?.getMovie.movie || id]);
+
+  const marks = {
+    1: '1',
+    15: '15',
+    30: '30',
+    45: '45',
+    59: '59',
+  };
+
+  const markHour = {
+    0: '0',
+    1: '1',
+    2: '2',
+    3: '3',
+    4: '4',
+    5: '5',
   };
 
   const steps = [
@@ -235,7 +277,7 @@ const CreateMovie: React.FC = () => {
     {
       title: 'Adding more Information',
       content: (
-        <Form {...layout} form={form} onFinish={handleAddInformation}>
+        <Form {...layout} form={form} onFinish={handleUpdateInformation}>
           <Form.Item
             label='Type'
             name='type'
@@ -357,9 +399,19 @@ const CreateMovie: React.FC = () => {
         <div className='steps-content mt-5'>{steps[current].content}</div>
 
         <div className='steps-action'>
+          {current > 0 && (
+            <Button
+              size='small'
+              style={{ margin: '0 8px' }}
+              loading={movieLoading}
+              onClick={() => form.submit()}
+            >
+              Previous
+            </Button>
+          )}
           {current === steps.length - 1 && (
             <Button type='primary' size='small' onClick={() => form.submit()}>
-              Done
+              Finish
             </Button>
           )}
           {current === 1 &&
@@ -372,7 +424,7 @@ const CreateMovie: React.FC = () => {
                 style={{ margin: '0 8px' }}
                 onClick={() => form.submit()}
               >
-                Upload
+                Update
               </Button>
             ) : (
               <Button
@@ -392,17 +444,19 @@ const CreateMovie: React.FC = () => {
               loading={movieLoading}
               onClick={() => form.submit()}
             >
-              Next
+              Update
             </Button>
           )}
-          <Button
-            type='primary'
-            size='small'
-            loading={movieLoading}
-            onClick={next}
-          >
-            Skip
-          </Button>
+          {current < steps.length - 1 && (
+            <Button
+              type='primary'
+              size='small'
+              loading={movieLoading}
+              onClick={next}
+            >
+              Skip
+            </Button>
+          )}
         </div>
         <div>{message}</div>
       </div>

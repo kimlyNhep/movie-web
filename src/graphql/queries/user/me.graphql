@@ -1,8 +1,9 @@
 query Me {
   me {
     id
+    photo
+    role
     username
     email
-    role
   }
 }

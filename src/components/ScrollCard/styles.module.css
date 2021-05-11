@@ -1,12 +1,12 @@
 .wrapper {
-  max-height: 240px;
+  height: 100%;
   display: flex;
   overflow-x: auto;
 }
 
 .wrapper .item {
   width: 160px;
-  height: 220px;
+  max-height: 250px;
   text-align: center;
   background-color: #ddd;
   margin-right: 2px;

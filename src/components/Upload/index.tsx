@@ -1,10 +1,4 @@
-import React, {
-  CSSProperties,
-  Dispatch,
-  SetStateAction,
-  useMemo,
-  useState,
-} from 'react';
+import React, { CSSProperties, Dispatch, SetStateAction, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Image } from 'antd';
 
@@ -37,7 +31,7 @@ const rejectStyle = {
 };
 
 interface IDropZone {
-  setSelectedFile: Dispatch<SetStateAction<any>>;
+  setSelectedFile: Dispatch<SetStateAction<{ preview: string } | undefined>>;
   selectedFile: any;
 }
 

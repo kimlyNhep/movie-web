@@ -1,0 +1,12 @@
+query GetCharacters {
+  getAllCharacter {
+    errors {
+      field
+      message
+    }
+    users {
+      id
+      username
+    }
+  }
+}

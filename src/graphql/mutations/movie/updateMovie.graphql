@@ -1,0 +1,26 @@
+mutation UpdateMovie(
+  $id: String!
+  $title: String!
+  $genres: [String!]!
+  $description: String
+) {
+  updateMovie(
+    options: {
+      id: $id
+      title: $title
+      genres: $genres
+      description: $description
+    }
+  ) {
+    errors {
+      field
+      message
+    }
+    movie {
+      id
+      description
+      photo
+      title
+    }
+  }
+}

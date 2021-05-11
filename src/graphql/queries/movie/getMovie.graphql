@@ -21,12 +21,19 @@ query GetMovie($id: String!) {
       }
       info {
         id
-        duration
-        episode
         producer
         released_date
         status
         type
+        episode
+        duration
+        synopsis
+        backgroundInfo
+        characters {
+          id
+          username
+          photo
+        }
       }
     }
   }

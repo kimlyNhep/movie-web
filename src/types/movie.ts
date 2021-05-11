@@ -21,12 +21,12 @@ export interface IMovieInfoType {
   type: MovieType;
 }
 
-enum StatusType {
-  COMPLETED = 'completed',
-  ONGOING = 'on going',
-}
-
-enum MovieType {
+export enum MovieType {
   TV = 'tv',
   MOVIE = 'movie',
+}
+
+export enum StatusType {
+  COMPLETED = 'completed',
+  ONGOING = 'on going',
 }

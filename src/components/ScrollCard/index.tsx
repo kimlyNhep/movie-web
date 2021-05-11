@@ -12,7 +12,7 @@ export const ScrollCard: React.FC<{
       <Divider />
       <div className={styles.wrapper}>
         {movies?.map((movie) => (
-          <Tooltip placement='bottom' title={movie.title}>
+          <Tooltip placement='bottom' title={movie.title} key={movie.id}>
             <a className={styles.item} href={`/movie/detail/${movie.id}`}>
               <img src={movie.photo} alt='listing' />
             </a>

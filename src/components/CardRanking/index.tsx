@@ -7,12 +7,21 @@ interface ICardProps {
   description: string;
 }
 
-export const CardRanking: React.FC<ICardProps> = ({ title, rank, href, description }) => {
+export const CardRanking: React.FC<ICardProps> = ({
+  title,
+  rank,
+  href,
+  description,
+}) => {
   return (
     <List.Item key={title}>
       <div className='flex'>
         <span className='font-bold'>{rank}</span>
-        <a href={href} style={{ minWidth: '50px', maxHeight: '70px' }} className='ml-3'>
+        <a
+          href={href}
+          style={{ minWidth: '50px', maxHeight: '70px' }}
+          className='ml-3'
+        >
           <img
             src='https://cdn.myanimelist.net/r/50x70/images/anime/9/9453.webp?s=bcf651aae2cd301a32bcc46e317a98bc'
             alt='ranking'

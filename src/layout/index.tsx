@@ -75,7 +75,7 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
   };
 
   const handleLogOut = async () => {
-    const response = await logoutRequest({
+    await logoutRequest({
       update: (cache) => {
         cache.writeQuery<MeQuery>({
           query: MeDocument,

@@ -6,7 +6,7 @@
 
 .photo {
   display: flex;
-  height: 250px;
+  min-height: 250px;
   width: 100%;
   align-items: center;
   justify-content: center;
