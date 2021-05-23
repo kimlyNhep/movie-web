@@ -1,0 +1,4 @@
+.card :global(.ant-card-body) {
+  padding: 0.7rem;
+  background-color: grey;
+}

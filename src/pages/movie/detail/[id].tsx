@@ -2,9 +2,10 @@ import Layout from '../../../layout';
 import { Divider, List, Button } from 'antd';
 import { useRouter } from 'next/router';
 import { MovieSide } from '../../../components/MovieSide';
-import { useGetMovieQuery } from '../../../generated/graphql';
+import { RatingMovies, useGetMovieQuery } from '../../../generated/graphql';
 import { IMovieType } from '../../../types/movie';
 import { ScoreBoard } from '../../../components/ScoreBoard';
+import { RatingBoard } from '../../../components/RatingBoard';
 import { ListCharacters } from '../../../components/ListCharacters';
 import { ICharacterType } from '../../../types/user';
 
@@ -17,10 +18,17 @@ const MovieDetail = () => {
     },
   });
 
-  let characters;
+  let characters: ICharacterType[] = [];
 
   if (data?.getMovie.movie) {
-    characters = data?.getMovie.movie?.info?.characters;
+    characters = data?.getMovie.movie?.info?.movieCharacters?.map(
+      (character) => ({
+        id: character.characters.id,
+        username: character.characters.username,
+        photo: character.characters.photo,
+        role: character.role,
+      })
+    ) as ICharacterType[];
   }
 
   const handleUpdateMovie = () => {
@@ -32,8 +40,16 @@ const MovieDetail = () => {
       <div className='w-full mb-5'>
         <div className='flex flex-col w-full'>
           <div className='flex justify-between'>
-            <strong>{data?.getMovie.movie?.title}</strong>
-            <Button size='small' type='primary' onClick={handleUpdateMovie}>
+            <div className='flex flex-col'>
+              <strong className='text-lg'>{data?.getMovie.movie?.title}</strong>
+              <span>{data?.getMovie.movie?.description}</span>
+            </div>
+            <Button
+              size='small'
+              className='self-center px-5'
+              type='primary'
+              onClick={handleUpdateMovie}
+            >
               Edit
             </Button>
           </div>
@@ -43,7 +59,13 @@ const MovieDetail = () => {
           <MovieSide movie={data?.getMovie.movie as IMovieType} />
           <Divider type='vertical' className='h-full bg-gray-400'></Divider>
           <div className='w-full'>
-            <ScoreBoard />
+            <ScoreBoard
+              ratedPoint={data?.getMovie.movie?.ratingMovies as RatingMovies[]}
+            />
+            <RatingBoard
+              movieId={id}
+              ratedPoint={data?.getMovie.movie?.ratingMovies as RatingMovies[]}
+            />
             <div className='mt-4'>
               <strong>Synopsis</strong>
               <Divider className='my-1 bg-gray-300' />
@@ -57,18 +79,14 @@ const MovieDetail = () => {
             <div className='mt-4'>
               <strong>Characters</strong>
               <Divider className='my-1 bg-gray-300' />
-              <List
-                size='large'
-                itemLayout='horizontal'
-                dataSource={characters as ICharacterType[]}
-                renderItem={(item) => (
-                  <ListCharacters
-                    id={item.id}
-                    username={item.username}
-                    photo={item.photo as string | undefined}
-                  />
-                )}
-              ></List>
+              {!!characters?.length && (
+                <List
+                  size='large'
+                  itemLayout='horizontal'
+                  dataSource={characters}
+                  renderItem={(item) => <ListCharacters character={item} />}
+                />
+              )}
             </div>
           </div>
         </div>

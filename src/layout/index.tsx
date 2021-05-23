@@ -16,6 +16,7 @@ import {
   MeQuery,
   useLogoutMutation,
   useMeQuery,
+  UserRoles,
 } from '../generated/graphql';
 import { useRouter } from 'next/router';
 import { Spin } from 'antd';
@@ -51,12 +52,21 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
     );
   } else if (data.me) {
     body = (
-      <Menu.Item key='logout'>
-        <div className='flex items-center justify-between'>
-          <div className='mr-1'>Logout</div>
-          <LoginSvg />
-        </div>
-      </Menu.Item>
+      <>
+        <Menu.Item key='logout'>
+          <div className='flex items-center justify-between'>
+            <div className='mr-1'>Logout</div>
+            <LoginSvg />
+          </div>
+        </Menu.Item>
+        {data.me.role === UserRoles.Admin && (
+          <Menu.Item key='create-new-character'>
+            <div className='flex items-center justify-between'>
+              <div className='mr-1'>Create New Character</div>
+            </div>
+          </Menu.Item>
+        )}
+      </>
     );
   }
 
@@ -68,6 +78,9 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
         return router.push('/signup');
       case 'logout':
         handleLogOut();
+        break;
+      case 'create-new-character':
+        router.push('/signup/actor');
         break;
       default:
         return router.push('/');
@@ -94,7 +107,7 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
       <div className={cls(styles.container, classname)}>
         <div className={styles.topLayout}>
           <a href='/' className={styles.logo}>
-            The Movies
+            Movie Academy
           </a>
           <div className={styles.action}>
             <MailOutlined style={{ fontSize: '25px', paddingRight: '1rem' }} />

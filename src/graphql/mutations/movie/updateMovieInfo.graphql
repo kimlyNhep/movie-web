@@ -1,5 +1,4 @@
 mutation UpdateMovieInformation(
-  $id: String!
   $type: MovieType!
   $producer: String
   $episode: Int
@@ -7,10 +6,12 @@ mutation UpdateMovieInformation(
   $durations: Int
   $releasedDate: String
   $movie: String!
+  $characters: [CharacterInput!]!
+  $synopsis: String
+  $backgroundInfo: String
 ) {
   updateMovieInfo(
     options: {
-      id: $id
       type: $type
       producer: $producer
       episode: $episode
@@ -18,6 +19,9 @@ mutation UpdateMovieInformation(
       durations: $durations
       released_date: $releasedDate
       movie: $movie
+      characters: $characters
+      synopsis: $synopsis
+      backgroundInfo: $backgroundInfo
     }
   ) {
     info {
@@ -28,6 +32,8 @@ mutation UpdateMovieInformation(
       released_date
       status
       type
+      synopsis
+      backgroundInfo
     }
     errors {
       ...ErrorFragment

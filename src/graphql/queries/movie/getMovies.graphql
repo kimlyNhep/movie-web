@@ -27,6 +27,16 @@ query GetMovies {
         released_date
         status
         type
+        backgroundInfo
+        synopsis
+        movieCharacters {
+          role
+          characters {
+            id
+            username
+            photo
+          }
+        }
       }
     }
   }

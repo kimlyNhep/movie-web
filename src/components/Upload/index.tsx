@@ -33,11 +33,13 @@ const rejectStyle = {
 interface IDropZone {
   setSelectedFile: Dispatch<SetStateAction<{ preview: string } | undefined>>;
   selectedFile: any;
+  height: number;
 }
 
 export const UploadDropZone: React.FC<IDropZone> = ({
   setSelectedFile,
   selectedFile,
+  height,
 }) => {
   const { isDragActive, isDragAccept, isDragReject } = useDropzone({
     accept: 'image/*',
@@ -80,7 +82,7 @@ export const UploadDropZone: React.FC<IDropZone> = ({
       </div>
       <aside
         className='mt-8 overflow-hidden flex justify-center'
-        style={{ height: 321 }}
+        style={{ height }}
       >
         {thumbs}
       </aside>

@@ -1,3 +1,5 @@
+import { UserRoles } from '../generated/graphql';
+
 export interface IUserType {
   id: string;
   username: string;
@@ -6,14 +8,9 @@ export interface IUserType {
   role: UserRoles;
 }
 
-enum UserRoles {
-  ADMIN = 'admin',
-  MEMBER = 'member',
-  CHARACTER = 'character',
-}
-
 export interface ICharacterType {
   id: string;
   username: string;
-  photo?: string;
+  photo?: string | null;
+  role?: string;
 }

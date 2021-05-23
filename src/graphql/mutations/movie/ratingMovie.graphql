@@ -1,0 +1,14 @@
+mutation RatingMovie($ratedPoint: Int!, $movieId: String!) {
+  ratingMovie(option: { ratedPoint: $ratedPoint, movieId: $movieId }) {
+    errors {
+      field
+      message
+    }
+    movie {
+      id
+      title
+      description
+      photo
+    }
+  }
+}

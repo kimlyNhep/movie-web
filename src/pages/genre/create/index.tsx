@@ -3,6 +3,7 @@ import { useCreateGenreMutation } from '../../../generated/graphql';
 import Layout from '../../../layout';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 interface IGenreForm {
   name: string;
@@ -17,6 +18,7 @@ const CreateMovie: React.FC = () => {
   const [message, setMessage] = useState<JSX.Element | null>();
   const [errors, setErrors] = useState<IErrorState>();
   const [createGenreRequest] = useCreateGenreMutation();
+  const router = useRouter();
 
   const [form] = Form.useForm();
   const layout = {
@@ -58,6 +60,8 @@ const CreateMovie: React.FC = () => {
 
       if (response.data?.createGenre.errors) {
         console.log(response.data.createGenre.errors);
+      } else if (response.data?.createGenre.genre) {
+        router.push('/');
       }
     } catch (err) {
       setErrors({

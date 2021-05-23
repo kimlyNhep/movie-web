@@ -29,11 +29,23 @@ query GetMovie($id: String!) {
         duration
         synopsis
         backgroundInfo
-        characters {
+        movieCharacters {
+          role
+          characters {
+            id
+            username
+            photo
+          }
+        }
+      }
+      ratingMovies {
+        user {
           id
           username
           photo
+          email
         }
+        ratedPoint
       }
     }
   }

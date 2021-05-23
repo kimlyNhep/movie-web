@@ -10,8 +10,6 @@ interface IMovieInfoProps {
 }
 
 export const MovieDetailInfo: React.FC<IMovieInfoProps> = ({ info }) => {
-  console.log(info);
-
   let time = 0;
   let min = info?.duration! / 60;
   if (min > 60) {

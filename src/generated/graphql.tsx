@@ -16,6 +16,11 @@ export type Scalars = {
   Upload: any;
 };
 
+export type CharacterInput = {
+  id: Scalars['String'];
+  role: Scalars['String'];
+};
+
 export type CreateMovieInformationInput = {
   type: MovieType;
   producer?: Maybe<Scalars['String']>;
@@ -24,7 +29,7 @@ export type CreateMovieInformationInput = {
   durations?: Maybe<Scalars['Int']>;
   released_date?: Maybe<Scalars['String']>;
   movie: Scalars['String'];
-  characters?: Maybe<Array<Scalars['String']>>;
+  characters?: Maybe<Array<CharacterInput>>;
   synopsis?: Maybe<Scalars['String']>;
   backgroundInfo?: Maybe<Scalars['String']>;
 };
@@ -76,6 +81,14 @@ export type Movie = {
   creator: User;
   info?: Maybe<MovieInfo>;
   genres: Array<Genre>;
+  ratingMovies?: Maybe<Array<RatingMovies>>;
+};
+
+export type MovieCharacters = {
+  __typename?: 'MovieCharacters';
+  characters: User;
+  movieInfo: MovieInfo;
+  role?: Maybe<Scalars['String']>;
 };
 
 export type MovieInfo = {
@@ -90,7 +103,7 @@ export type MovieInfo = {
   duration?: Maybe<Scalars['Float']>;
   released_date?: Maybe<Scalars['String']>;
   movie: Movie;
-  characters?: Maybe<Array<User>>;
+  movieCharacters?: Maybe<Array<MovieCharacters>>;
 };
 
 export type MovieInfoResponse = {
@@ -106,8 +119,8 @@ export type MovieResponse = {
 };
 
 export enum MovieType {
-  Tv = 'TV',
-  Movie = 'MOVIE'
+  Tv = 'Tv',
+  Movie = 'Movie'
 }
 
 export type MovieUploadResponse = {
@@ -134,7 +147,7 @@ export type Mutation = {
   updateMovie: MovieResponse;
   createMovie: MovieResponse;
   createMovieInformation: MovieInfoResponse;
-  addCharacters: UsersResponse;
+  ratingMovie: MovieResponse;
 };
 
 
@@ -186,9 +199,8 @@ export type MutationCreateMovieInformationArgs = {
 };
 
 
-export type MutationAddCharactersArgs = {
-  characterIds: Array<Scalars['String']>;
-  id: Scalars['String'];
+export type MutationRatingMovieArgs = {
+  option: RatingInput;
 };
 
 export type Query = {
@@ -205,6 +217,18 @@ export type QueryGetMovieArgs = {
   id: Scalars['String'];
 };
 
+export type RatingInput = {
+  ratedPoint: Scalars['Int'];
+  movieId: Scalars['String'];
+};
+
+export type RatingMovies = {
+  __typename?: 'RatingMovies';
+  user: User;
+  movie: Movie;
+  ratedPoint: Scalars['Int'];
+};
+
 export type RegisterResponse = {
   __typename?: 'RegisterResponse';
   user?: Maybe<User>;
@@ -212,12 +236,11 @@ export type RegisterResponse = {
 };
 
 export enum StatusType {
-  Completed = 'COMPLETED',
-  Ongoing = 'ONGOING'
+  Completed = 'Completed',
+  Ongoing = 'Ongoing'
 }
 
 export type UpdateMovieInformationInput = {
-  id: Scalars['String'];
   type: MovieType;
   producer?: Maybe<Scalars['String']>;
   episode?: Maybe<Scalars['Int']>;
@@ -225,7 +248,7 @@ export type UpdateMovieInformationInput = {
   durations?: Maybe<Scalars['Int']>;
   released_date?: Maybe<Scalars['String']>;
   movie: Scalars['String'];
-  characters?: Maybe<Array<Scalars['String']>>;
+  characters?: Maybe<Array<CharacterInput>>;
   synopsis?: Maybe<Scalars['String']>;
   backgroundInfo?: Maybe<Scalars['String']>;
 };
@@ -246,7 +269,8 @@ export type User = {
   role: Scalars['String'];
   movies: Array<Movie>;
   photo?: Maybe<Scalars['String']>;
-  actingMovies?: Maybe<Array<MovieInfo>>;
+  movieCharacters?: Maybe<Array<MovieCharacters>>;
+  ratingMovies?: Maybe<Array<RatingMovies>>;
 };
 
 export type UserLoginInput = {
@@ -262,9 +286,9 @@ export type UserRegisterInput = {
 };
 
 export enum UserRoles {
-  Admin = 'ADMIN',
-  Member = 'MEMBER',
-  Character = 'CHARACTER'
+  Admin = 'Admin',
+  Member = 'Member',
+  Character = 'Character'
 }
 
 export type UsersResponse = {
@@ -348,6 +372,7 @@ export type CreateMovieInformationMutationVariables = Exact<{
   durations?: Maybe<Scalars['Int']>;
   releasedDate?: Maybe<Scalars['String']>;
   movie: Scalars['String'];
+  characters: Array<CharacterInput> | CharacterInput;
 }>;
 
 
@@ -362,6 +387,26 @@ export type CreateMovieInformationMutation = (
       { __typename?: 'ErrorResponse' }
       & ErrorFragmentFragment
     )>> }
+  ) }
+);
+
+export type RatingMovieMutationVariables = Exact<{
+  ratedPoint: Scalars['Int'];
+  movieId: Scalars['String'];
+}>;
+
+
+export type RatingMovieMutation = (
+  { __typename?: 'Mutation' }
+  & { ratingMovie: (
+    { __typename?: 'MovieResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & Pick<ErrorResponse, 'field' | 'message'>
+    )>>, movie?: Maybe<(
+      { __typename?: 'Movie' }
+      & Pick<Movie, 'id' | 'title' | 'description' | 'photo'>
+    )> }
   ) }
 );
 
@@ -388,7 +433,6 @@ export type UpdateMovieMutation = (
 );
 
 export type UpdateMovieInformationMutationVariables = Exact<{
-  id: Scalars['String'];
   type: MovieType;
   producer?: Maybe<Scalars['String']>;
   episode?: Maybe<Scalars['Int']>;
@@ -396,6 +440,9 @@ export type UpdateMovieInformationMutationVariables = Exact<{
   durations?: Maybe<Scalars['Int']>;
   releasedDate?: Maybe<Scalars['String']>;
   movie: Scalars['String'];
+  characters: Array<CharacterInput> | CharacterInput;
+  synopsis?: Maybe<Scalars['String']>;
+  backgroundInfo?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -405,7 +452,7 @@ export type UpdateMovieInformationMutation = (
     { __typename?: 'MovieInfoResponse' }
     & { info?: Maybe<(
       { __typename?: 'MovieInfo' }
-      & Pick<MovieInfo, 'id' | 'duration' | 'episode' | 'producer' | 'released_date' | 'status' | 'type'>
+      & Pick<MovieInfo, 'id' | 'duration' | 'episode' | 'producer' | 'released_date' | 'status' | 'type' | 'synopsis' | 'backgroundInfo'>
     )>, errors?: Maybe<Array<(
       { __typename?: 'ErrorResponse' }
       & ErrorFragmentFragment
@@ -428,6 +475,28 @@ export type UploadMoviePhotoMutation = (
       { __typename?: 'ErrorResponse' }
       & Pick<ErrorResponse, 'field' | 'message'>
     )>> }
+  ) }
+);
+
+export type CreateCharacterMutationVariables = Exact<{
+  photo: Scalars['Upload'];
+  email: Scalars['String'];
+  username: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type CreateCharacterMutation = (
+  { __typename?: 'Mutation' }
+  & { createCharacter: (
+    { __typename?: 'RegisterResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & Pick<ErrorResponse, 'field' | 'message'>
+    )>>, user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'photo' | 'email'>
+    )> }
   ) }
 );
 
@@ -506,11 +575,22 @@ export type GetMovieQuery = (
       )>, info?: Maybe<(
         { __typename?: 'MovieInfo' }
         & Pick<MovieInfo, 'id' | 'producer' | 'released_date' | 'status' | 'type' | 'episode' | 'duration' | 'synopsis' | 'backgroundInfo'>
-        & { characters?: Maybe<Array<(
-          { __typename?: 'User' }
-          & Pick<User, 'id' | 'username' | 'photo'>
+        & { movieCharacters?: Maybe<Array<(
+          { __typename?: 'MovieCharacters' }
+          & Pick<MovieCharacters, 'role'>
+          & { characters: (
+            { __typename?: 'User' }
+            & Pick<User, 'id' | 'username' | 'photo'>
+          ) }
         )>> }
-      )> }
+      )>, ratingMovies?: Maybe<Array<(
+        { __typename?: 'RatingMovies' }
+        & Pick<RatingMovies, 'ratedPoint'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'username' | 'photo' | 'email'>
+        ) }
+      )>> }
     )> }
   ) }
 );
@@ -536,7 +616,15 @@ export type GetMoviesQuery = (
         & Pick<Genre, 'name' | 'id'>
       )>, info?: Maybe<(
         { __typename?: 'MovieInfo' }
-        & Pick<MovieInfo, 'id' | 'duration' | 'episode' | 'producer' | 'released_date' | 'status' | 'type'>
+        & Pick<MovieInfo, 'id' | 'duration' | 'episode' | 'producer' | 'released_date' | 'status' | 'type' | 'backgroundInfo' | 'synopsis'>
+        & { movieCharacters?: Maybe<Array<(
+          { __typename?: 'MovieCharacters' }
+          & Pick<MovieCharacters, 'role'>
+          & { characters: (
+            { __typename?: 'User' }
+            & Pick<User, 'id' | 'username' | 'photo'>
+          ) }
+        )>> }
       )> }
     )>> }
   ) }
@@ -554,7 +642,7 @@ export type GetCharactersQuery = (
       & Pick<ErrorResponse, 'field' | 'message'>
     )>>, users?: Maybe<Array<(
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
+      & Pick<User, 'id' | 'username' | 'photo'>
     )>> }
   ) }
 );
@@ -709,9 +797,9 @@ export type CreateMovieMutationHookResult = ReturnType<typeof useCreateMovieMuta
 export type CreateMovieMutationResult = Apollo.MutationResult<CreateMovieMutation>;
 export type CreateMovieMutationOptions = Apollo.BaseMutationOptions<CreateMovieMutation, CreateMovieMutationVariables>;
 export const CreateMovieInformationDocument = gql`
-    mutation CreateMovieInformation($type: MovieType!, $producer: String, $episode: Int, $status: StatusType!, $durations: Int, $releasedDate: String, $movie: String!) {
+    mutation CreateMovieInformation($type: MovieType!, $producer: String, $episode: Int, $status: StatusType!, $durations: Int, $releasedDate: String, $movie: String!, $characters: [CharacterInput!]!) {
   createMovieInformation(
-    options: {type: $type, producer: $producer, episode: $episode, status: $status, durations: $durations, released_date: $releasedDate, movie: $movie}
+    options: {type: $type, producer: $producer, episode: $episode, status: $status, durations: $durations, released_date: $releasedDate, movie: $movie, characters: $characters}
   ) {
     info {
       id
@@ -750,6 +838,7 @@ export type CreateMovieInformationMutationFn = Apollo.MutationFunction<CreateMov
  *      durations: // value for 'durations'
  *      releasedDate: // value for 'releasedDate'
  *      movie: // value for 'movie'
+ *      characters: // value for 'characters'
  *   },
  * });
  */
@@ -760,6 +849,49 @@ export function useCreateMovieInformationMutation(baseOptions?: Apollo.MutationH
 export type CreateMovieInformationMutationHookResult = ReturnType<typeof useCreateMovieInformationMutation>;
 export type CreateMovieInformationMutationResult = Apollo.MutationResult<CreateMovieInformationMutation>;
 export type CreateMovieInformationMutationOptions = Apollo.BaseMutationOptions<CreateMovieInformationMutation, CreateMovieInformationMutationVariables>;
+export const RatingMovieDocument = gql`
+    mutation RatingMovie($ratedPoint: Int!, $movieId: String!) {
+  ratingMovie(option: {ratedPoint: $ratedPoint, movieId: $movieId}) {
+    errors {
+      field
+      message
+    }
+    movie {
+      id
+      title
+      description
+      photo
+    }
+  }
+}
+    `;
+export type RatingMovieMutationFn = Apollo.MutationFunction<RatingMovieMutation, RatingMovieMutationVariables>;
+
+/**
+ * __useRatingMovieMutation__
+ *
+ * To run a mutation, you first call `useRatingMovieMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRatingMovieMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [ratingMovieMutation, { data, loading, error }] = useRatingMovieMutation({
+ *   variables: {
+ *      ratedPoint: // value for 'ratedPoint'
+ *      movieId: // value for 'movieId'
+ *   },
+ * });
+ */
+export function useRatingMovieMutation(baseOptions?: Apollo.MutationHookOptions<RatingMovieMutation, RatingMovieMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RatingMovieMutation, RatingMovieMutationVariables>(RatingMovieDocument, options);
+      }
+export type RatingMovieMutationHookResult = ReturnType<typeof useRatingMovieMutation>;
+export type RatingMovieMutationResult = Apollo.MutationResult<RatingMovieMutation>;
+export type RatingMovieMutationOptions = Apollo.BaseMutationOptions<RatingMovieMutation, RatingMovieMutationVariables>;
 export const UpdateMovieDocument = gql`
     mutation UpdateMovie($id: String!, $title: String!, $genres: [String!]!, $description: String) {
   updateMovie(
@@ -808,9 +940,9 @@ export type UpdateMovieMutationHookResult = ReturnType<typeof useUpdateMovieMuta
 export type UpdateMovieMutationResult = Apollo.MutationResult<UpdateMovieMutation>;
 export type UpdateMovieMutationOptions = Apollo.BaseMutationOptions<UpdateMovieMutation, UpdateMovieMutationVariables>;
 export const UpdateMovieInformationDocument = gql`
-    mutation UpdateMovieInformation($id: String!, $type: MovieType!, $producer: String, $episode: Int, $status: StatusType!, $durations: Int, $releasedDate: String, $movie: String!) {
+    mutation UpdateMovieInformation($type: MovieType!, $producer: String, $episode: Int, $status: StatusType!, $durations: Int, $releasedDate: String, $movie: String!, $characters: [CharacterInput!]!, $synopsis: String, $backgroundInfo: String) {
   updateMovieInfo(
-    options: {id: $id, type: $type, producer: $producer, episode: $episode, status: $status, durations: $durations, released_date: $releasedDate, movie: $movie}
+    options: {type: $type, producer: $producer, episode: $episode, status: $status, durations: $durations, released_date: $releasedDate, movie: $movie, characters: $characters, synopsis: $synopsis, backgroundInfo: $backgroundInfo}
   ) {
     info {
       id
@@ -820,6 +952,8 @@ export const UpdateMovieInformationDocument = gql`
       released_date
       status
       type
+      synopsis
+      backgroundInfo
     }
     errors {
       ...ErrorFragment
@@ -842,7 +976,6 @@ export type UpdateMovieInformationMutationFn = Apollo.MutationFunction<UpdateMov
  * @example
  * const [updateMovieInformationMutation, { data, loading, error }] = useUpdateMovieInformationMutation({
  *   variables: {
- *      id: // value for 'id'
  *      type: // value for 'type'
  *      producer: // value for 'producer'
  *      episode: // value for 'episode'
@@ -850,6 +983,9 @@ export type UpdateMovieInformationMutationFn = Apollo.MutationFunction<UpdateMov
  *      durations: // value for 'durations'
  *      releasedDate: // value for 'releasedDate'
  *      movie: // value for 'movie'
+ *      characters: // value for 'characters'
+ *      synopsis: // value for 'synopsis'
+ *      backgroundInfo: // value for 'backgroundInfo'
  *   },
  * });
  */
@@ -898,6 +1034,54 @@ export function useUploadMoviePhotoMutation(baseOptions?: Apollo.MutationHookOpt
 export type UploadMoviePhotoMutationHookResult = ReturnType<typeof useUploadMoviePhotoMutation>;
 export type UploadMoviePhotoMutationResult = Apollo.MutationResult<UploadMoviePhotoMutation>;
 export type UploadMoviePhotoMutationOptions = Apollo.BaseMutationOptions<UploadMoviePhotoMutation, UploadMoviePhotoMutationVariables>;
+export const CreateCharacterDocument = gql`
+    mutation CreateCharacter($photo: Upload!, $email: String!, $username: String!, $password: String!) {
+  createCharacter(
+    options: {email: $email, username: $username, password: $password}
+    photo: $photo
+  ) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      username
+      photo
+      email
+    }
+  }
+}
+    `;
+export type CreateCharacterMutationFn = Apollo.MutationFunction<CreateCharacterMutation, CreateCharacterMutationVariables>;
+
+/**
+ * __useCreateCharacterMutation__
+ *
+ * To run a mutation, you first call `useCreateCharacterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCharacterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCharacterMutation, { data, loading, error }] = useCreateCharacterMutation({
+ *   variables: {
+ *      photo: // value for 'photo'
+ *      email: // value for 'email'
+ *      username: // value for 'username'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useCreateCharacterMutation(baseOptions?: Apollo.MutationHookOptions<CreateCharacterMutation, CreateCharacterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCharacterMutation, CreateCharacterMutationVariables>(CreateCharacterDocument, options);
+      }
+export type CreateCharacterMutationHookResult = ReturnType<typeof useCreateCharacterMutation>;
+export type CreateCharacterMutationResult = Apollo.MutationResult<CreateCharacterMutation>;
+export type CreateCharacterMutationOptions = Apollo.BaseMutationOptions<CreateCharacterMutation, CreateCharacterMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(options: {username: $username, password: $password}) {
@@ -1045,11 +1229,23 @@ export const GetMovieDocument = gql`
         duration
         synopsis
         backgroundInfo
-        characters {
+        movieCharacters {
+          role
+          characters {
+            id
+            username
+            photo
+          }
+        }
+      }
+      ratingMovies {
+        user {
           id
           username
           photo
+          email
         }
+        ratedPoint
       }
     }
   }
@@ -1113,6 +1309,16 @@ export const GetMoviesDocument = gql`
         released_date
         status
         type
+        backgroundInfo
+        synopsis
+        movieCharacters {
+          role
+          characters {
+            id
+            username
+            photo
+          }
+        }
       }
     }
   }
@@ -1155,6 +1361,7 @@ export const GetCharactersDocument = gql`
     users {
       id
       username
+      photo
     }
   }
 }

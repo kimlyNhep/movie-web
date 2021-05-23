@@ -1,0 +1,22 @@
+mutation CreateCharacter(
+  $photo: Upload!
+  $email: String!
+  $username: String!
+  $password: String!
+) {
+  createCharacter(
+    options: { email: $email, username: $username, password: $password }
+    photo: $photo
+  ) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      username
+      photo
+      email
+    }
+  }
+}

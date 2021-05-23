@@ -1,3 +1,4 @@
+import { MovieType, StatusType } from '../generated/graphql';
 import { IGenreType } from './genre';
 import { IUserType } from './user';
 
@@ -19,14 +20,4 @@ export interface IMovieInfoType {
   released_date: number;
   status: StatusType;
   type: MovieType;
-}
-
-export enum MovieType {
-  TV = 'tv',
-  MOVIE = 'movie',
-}
-
-export enum StatusType {
-  COMPLETED = 'completed',
-  ONGOING = 'on going',
 }

@@ -3,13 +3,10 @@ import { Card, Form, Button, Divider, Input, Checkbox, Alert } from 'antd';
 import cls from 'classnames';
 import { useRouter } from 'next/router';
 import styles from './styles.module.css';
-import { toErrorMap } from '../../../utils/errorMap';
-import { Footer } from '../../components/Footer';
-import {
-  MeDocument,
-  MeQuery,
-  useRegisterMutation,
-} from '../../generated/graphql';
+import { toErrorMap } from '../../../../utils/errorMap';
+import { Footer } from '../../../components/Footer';
+import { useCreateCharacterMutation } from '../../../generated/graphql';
+import { UploadDropZone } from '../../../components/Upload';
 
 interface IRegisterProps {}
 
@@ -18,11 +15,17 @@ interface IErrorState {
   error: { field: string; message: string };
 }
 
-const Signup: React.FC<IRegisterProps> = () => {
+const CreateActor: React.FC<IRegisterProps> = () => {
   const router = useRouter();
   const [errors, setErrors] = useState<IErrorState>();
   const [message, setMessage] = useState<JSX.Element | null>();
-  const [registerRequest, { data }] = useRegisterMutation();
+  const [createCharacterRequest, { data }] = useCreateCharacterMutation();
+  const [selectedFile, setSelectedFile] = useState<
+    | {
+        preview: string;
+      }
+    | undefined
+  >();
 
   const hanldeGoHomePage = async () => {
     await router.push('/');
@@ -34,31 +37,19 @@ const Signup: React.FC<IRegisterProps> = () => {
 
   const handleCreateAccount = async (values: any) => {
     const { username, email, password } = values;
-    await registerRequest({
-      variables: { username, email, password },
-      update: (cache, { data }) => {
-        cache.writeQuery<MeQuery>({
-          query: MeDocument,
-          data: {
-            me: data?.register.user,
-          },
-        });
-      },
+    await createCharacterRequest({
+      variables: { username, email, password, photo: selectedFile },
     });
 
-    if (data?.register.user?.username) {
+    if (data?.createCharacter.user) {
       router.push('/');
-    } else if (data?.register.errors) {
-      const errors = data?.register.errors;
+    } else if (data?.createCharacter.errors) {
+      const errors = data?.createCharacter.errors;
       setErrors({ error: toErrorMap(errors), status: true });
     } else {
       console.log('Something went wrong');
     }
   };
-
-  const handleCreateActor = () => {
-    router.push('/signup/actor');
-  }
 
   useEffect(() => {
     if (errors?.status) {
@@ -80,25 +71,21 @@ const Signup: React.FC<IRegisterProps> = () => {
         <div className={cls(styles.cardInner, 'flex-col items-center')}>
           <span className='text-lg'>Start Using theMovies</span>
           <Divider />
-          <span className='text-lg'>Sign up with</span>
-          <div className='flex mt-3'>
-            <Button className='flex items-center mr-3 w-32'>Google</Button>
-            <Button
-              className='flex items-center w-32'
-              style={{ backgroundColor: '#3c5b97', color: 'white' }}
-            >
-              Facebook
-            </Button>
-          </div>
-          <Divider plain>Or</Divider>
           <Form
             className='flex flex-col'
             name='basic'
             layout='vertical'
             initialValues={{ remember: true, policy: false }}
             onFinish={handleCreateAccount}
-            // onFinishFailed={onFinishFailed}
           >
+            <Form.Item name='photo' labelAlign='left'>
+              <UploadDropZone
+                setSelectedFile={setSelectedFile}
+                selectedFile={selectedFile}
+                height={150}
+              />
+            </Form.Item>
+            <Divider className='mt-0' />
             <Form.Item
               label='Username'
               required
@@ -158,15 +145,6 @@ const Signup: React.FC<IRegisterProps> = () => {
                 Home
               </Button>
             </Form.Item>
-            <Form.Item>
-            <Button
-                onClick={handleCreateActor}
-                className='w-40 mx-auto'
-                style={{ backgroundColor: '#3c5b97', color: 'white' }}
-              >
-                Actor
-              </Button>
-            </Form.Item>
           </Form>
         </div>
       </Card>
@@ -176,4 +154,4 @@ const Signup: React.FC<IRegisterProps> = () => {
   );
 };
 
-export default Signup;
+export default CreateActor;

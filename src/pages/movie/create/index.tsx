@@ -8,15 +8,16 @@ import {
   Slider,
   Alert,
   Steps,
+  List,
 } from 'antd';
 import {
-  MovieType,
-  StatusType,
   useCreateMovieInformationMutation,
   useCreateMovieMutation,
   useGetCharactersQuery,
   useGetGenresQuery,
   useUploadMoviePhotoMutation,
+  StatusType,
+  MovieType,
 } from '../../../generated/graphql';
 import Layout from '../../../layout';
 import moment, { Moment } from 'moment';
@@ -25,6 +26,9 @@ import { useEffect, useState } from 'react';
 import { UploadDropZone } from '../../../components/Upload';
 import { useRouter } from 'next/router';
 import { IMovieType } from '../../../types/movie';
+import { ListCharacters } from '../../../components/ListCharacters';
+import { ICharacterType } from '../../../types/user';
+import _ from 'lodash';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -53,6 +57,7 @@ const CreateMovie: React.FC = () => {
   const [movie, setMovie] = useState<IMovieType>();
   const { data } = useGetGenresQuery();
   const charactersQuery = useGetCharactersQuery();
+  const [characters, setCharacters] = useState<ICharacterType[]>([]);
   const [message, setMessage] = useState<JSX.Element | null>();
   const [errors, setErrors] = useState<IErrorState>();
   const router = useRouter();
@@ -164,6 +169,10 @@ const CreateMovie: React.FC = () => {
           durations: time,
           releasedDate: date,
           movie: movie.id,
+          characters: characters.map((item) => ({
+            id: item.id,
+            role: item.role!,
+          })),
         },
       });
 
@@ -173,6 +182,32 @@ const CreateMovie: React.FC = () => {
       } else if (response.data?.createMovieInformation.info) {
         router.push('/');
       }
+    }
+  };
+
+  const handleSelectedCharacters = (values: string[]) => {
+    const selectedCharacters = charactersQuery.data?.getAllCharacter.users?.reduce(
+      (total: ICharacterType[], item) => {
+        values.forEach((id) => {
+          if (id === item.id) {
+            total.push(item);
+          }
+        });
+        return total;
+      },
+      []
+    );
+
+    setCharacters(selectedCharacters as ICharacterType[]);
+  };
+
+  const handleChangeRole = (event: any) => {
+    const { value, name } = event.target;
+    const foundedIndex = characters.findIndex((item) => item.id === name);
+    if (foundedIndex !== -1) {
+      const newCharacters = _.cloneDeep(characters);
+      newCharacters[foundedIndex].role = value;
+      setCharacters(newCharacters);
     }
   };
 
@@ -227,6 +262,7 @@ const CreateMovie: React.FC = () => {
             <UploadDropZone
               setSelectedFile={setSelectedFile}
               selectedFile={selectedFile}
+              height={321}
             />
           </Form.Item>
         </Form>
@@ -308,13 +344,12 @@ const CreateMovie: React.FC = () => {
           >
             <DatePicker style={{ width: '100%' }} size='small' />
           </Form.Item>
-          <Form.Item
-            label='Characters'
-            name='characters'
-            labelAlign='left'
-            rules={[{ required: true, message: 'Please input Characters' }]}
-          >
-            <Select size='small' mode='multiple'>
+          <Form.Item label='Characters' name='characters' labelAlign='left'>
+            <Select
+              size='small'
+              mode='multiple'
+              onChange={handleSelectedCharacters}
+            >
               {charactersQuery.data?.getAllCharacter.users?.map((character) => (
                 <Select.Option value={character.id} key={character.id}>
                   {character.username}
@@ -322,6 +357,19 @@ const CreateMovie: React.FC = () => {
               ))}
             </Select>
           </Form.Item>
+          {!!characters?.length && (
+            <List
+              size='large'
+              itemLayout='horizontal'
+              dataSource={characters}
+              renderItem={(item) => (
+                <ListCharacters
+                  character={item}
+                  onChangeRole={handleChangeRole}
+                />
+              )}
+            />
+          )}
         </Form>
       ),
     },

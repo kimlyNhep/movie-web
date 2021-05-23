@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Divider } from 'antd';
 import styles from './styles.module.css';
 import cls from 'classnames';
+import { RatingMovies } from '../../generated/graphql';
 
-export const ScoreBoard: React.FC = () => {
+interface IScoreBoardProp {
+  ratedPoint?: RatingMovies[];
+}
+
+export const ScoreBoard: React.FC<IScoreBoardProp> = ({ ratedPoint }) => {
+  const [ratingValue, setRatingValue] = useState(0);
+  const [totalRatedUsers, setTotalRatedUsers] = useState(0);
+
+  useEffect(() => {
+    if (ratedPoint) {
+      const ratedValue = ratedPoint?.reduce((totalPoint, point) => {
+        return (totalPoint + point.ratedPoint) / ratedPoint.length;
+      }, 0);
+      setRatingValue(ratedValue || 0);
+      setTotalRatedUsers(ratedPoint.length);
+    }
+  }, [ratedPoint]);
+
   return (
     <div className='w-full'>
       <Card
@@ -17,8 +35,8 @@ export const ScoreBoard: React.FC = () => {
             <div className='bg-blue-800 w-16 h-5 rounded-sm text-white flex justify-center items-center'>
               score
             </div>
-            <div className='text-2xl text-center'>7.25</div>
-            <div className='text-xs text-center'>3453 users</div>
+            <div className='text-2xl text-center'>{ratingValue}</div>
+            <div className='text-xs text-center'>{totalRatedUsers} users</div>
           </div>
           <Divider className='bg-gray-300 h-full' type='vertical' />
           <div className='flex items-center ml-3'>

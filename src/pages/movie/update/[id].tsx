@@ -8,6 +8,7 @@ import {
   Alert,
   Steps,
   Slider,
+  List,
 } from 'antd';
 import {
   MovieType,
@@ -26,6 +27,9 @@ import { useEffect, useState } from 'react';
 import { UploadDropZone } from '../../../components/Upload';
 import { useRouter } from 'next/router';
 import { IMovieType } from '../../../types/movie';
+import { ICharacterType } from '../../../types/user';
+import { ListCharacters } from '../../../components/ListCharacters';
+import _ from 'lodash';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -42,6 +46,7 @@ interface IMovieForm {
   hour?: number;
   minuate?: number;
   releasedDate?: Moment;
+  characters: string[];
 }
 
 interface IErrorState {
@@ -54,10 +59,28 @@ const CreateMovie: React.FC = () => {
   const [movie, setMovie] = useState<IMovieType>();
   const { data } = useGetGenresQuery();
   const charactersQuery = useGetCharactersQuery();
+  const [characters, setCharacters] = useState<ICharacterType[]>([]);
   const [message, setMessage] = useState<JSX.Element | null>();
   const [errors, setErrors] = useState<IErrorState>();
   const router = useRouter();
   const id = router.query.id as string;
+
+  const marks = {
+    1: '1',
+    15: '15',
+    30: '30',
+    45: '45',
+    59: '59',
+  };
+
+  const markHour = {
+    0: '0',
+    1: '1',
+    2: '2',
+    3: '3',
+    4: '4',
+    5: '5',
+  };
 
   const movieQuery = useGetMovieQuery({
     variables: {
@@ -147,10 +170,9 @@ const CreateMovie: React.FC = () => {
 
     const date = releasedDate?.format('l');
 
-    if (movie?.info) {
+    if (movie) {
       const response = await updateMovieInfoRequest({
         variables: {
-          id: movie.info.id,
           type,
           producer,
           episode,
@@ -158,6 +180,10 @@ const CreateMovie: React.FC = () => {
           durations: time,
           releasedDate: date,
           movie: movie.id,
+          characters: characters.map((item) => ({
+            id: item.id,
+            role: item.role!,
+          })),
         },
       });
 
@@ -186,36 +212,63 @@ const CreateMovie: React.FC = () => {
       title: movie?.title,
       description: movie?.description,
       genres: movie?.genres.map((genre) => genre.id),
-      type: movie?.info?.type.toUpperCase(),
+      type: movie?.info?.type,
       producer: movie?.info?.producer,
       episode: movie?.info?.episode,
-      status: movie?.info?.status.toUpperCase(),
+      status: movie?.info?.status,
       hour: hour,
       minuate: min,
       releasedDate: moment(movie?.info?.released_date),
-      characters: movie?.info?.characters?.map((character) => character.id),
+      characters: movie?.info?.movieCharacters?.map(
+        (movieCharacter) => movieCharacter.characters.id
+      ),
     });
+
+    const newCharacters = movie?.info?.movieCharacters?.map(
+      (movieCharacter) => ({
+        id: movieCharacter.characters.id,
+        username: movieCharacter.characters.username,
+        photo: movieCharacter.characters.photo,
+        role: movieCharacter.role,
+      })
+    );
+
+    setCharacters(newCharacters as ICharacterType[]);
 
     setSelectedFile({
       preview: movie?.photo as string,
     });
   }, [movieQuery.data?.getMovie.movie || id]);
 
-  const marks = {
-    1: '1',
-    15: '15',
-    30: '30',
-    45: '45',
-    59: '59',
+  const handleChangeRole = (event: any) => {
+    const { value, name } = event.target;
+    const foundedIndex = characters.findIndex((item) => item.id === name);
+    if (foundedIndex !== -1) {
+      const newCharacters = _.cloneDeep(characters);
+      newCharacters[foundedIndex].role = value;
+      setCharacters(newCharacters);
+      console.log(newCharacters);
+    }
   };
 
-  const markHour = {
-    0: '0',
-    1: '1',
-    2: '2',
-    3: '3',
-    4: '4',
-    5: '5',
+  const handleSelectedCharacters = (values: string[]) => {
+    const selectedCharacters = charactersQuery.data?.getAllCharacter.users?.reduce(
+      (total: ICharacterType[], item) => {
+        values.forEach((id) => {
+          if (id === item.id) {
+            const foundedCharacter = characters.find(
+              (character) => character.id === item.id
+            );
+            if (foundedCharacter) total.push(foundedCharacter);
+            else total.push(item);
+          }
+        });
+        return total;
+      },
+      []
+    );
+
+    setCharacters(selectedCharacters as ICharacterType[]);
   };
 
   const steps = [
@@ -269,6 +322,7 @@ const CreateMovie: React.FC = () => {
             <UploadDropZone
               setSelectedFile={setSelectedFile}
               selectedFile={selectedFile}
+              height={321}
             />
           </Form.Item>
         </Form>
@@ -350,13 +404,12 @@ const CreateMovie: React.FC = () => {
           >
             <DatePicker style={{ width: '100%' }} size='small' />
           </Form.Item>
-          <Form.Item
-            label='Characters'
-            name='characters'
-            labelAlign='left'
-            rules={[{ required: true, message: 'Please input Characters' }]}
-          >
-            <Select size='small' mode='multiple'>
+          <Form.Item label='Characters' name='characters' labelAlign='left'>
+            <Select
+              size='small'
+              mode='multiple'
+              onChange={handleSelectedCharacters}
+            >
               {charactersQuery.data?.getAllCharacter.users?.map((character) => (
                 <Select.Option value={character.id} key={character.id}>
                   {character.username}
@@ -364,6 +417,19 @@ const CreateMovie: React.FC = () => {
               ))}
             </Select>
           </Form.Item>
+          {!!characters?.length && (
+            <List
+              size='large'
+              itemLayout='horizontal'
+              dataSource={characters}
+              renderItem={(item) => (
+                <ListCharacters
+                  character={item}
+                  onChangeRole={handleChangeRole}
+                />
+              )}
+            />
+          )}
         </Form>
       ),
     },

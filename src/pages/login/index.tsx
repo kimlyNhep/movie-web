@@ -68,7 +68,6 @@ const Login: NextPage<ILoginProps> = () => {
     } else if (response.data?.login.errors) {
       const errors = response.data.login.errors;
       setErrors({ error: toErrorMap(errors), status: true });
-      console.log('asdfad');
     }
   };
 
