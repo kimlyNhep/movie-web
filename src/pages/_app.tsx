@@ -9,7 +9,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const token = Cookie.get('token');
 
   const link = createUploadLink({
-    uri: 'http://54.151.252.5:8000/graphql',
+    uri: 'https://movie-academy.herokuapp.com/graphql',
     credentials: 'include',
     headers: {
       Authorization: `Bearer ${token}`,
