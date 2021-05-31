@@ -6,7 +6,7 @@ import Layout from '../../layout';
 import { IUserType } from '../../types/user';
 
 const ProfileDetail = () => {
-  const { data, loading } = useMeQuery();
+  const { data } = useMeQuery();
   const router = useRouter();
 
   const handleAddMovie = () => {

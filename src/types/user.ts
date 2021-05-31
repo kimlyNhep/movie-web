@@ -11,6 +11,6 @@ export interface IUserType {
 export interface ICharacterType {
   id: string;
   username: string;
-  photo?: string | null;
+  photo?: string;
   role?: string;
 }

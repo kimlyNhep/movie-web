@@ -260,7 +260,7 @@ const CreateMovie: React.FC = () => {
               (character) => character.id === item.id
             );
             if (foundedCharacter) total.push(foundedCharacter);
-            else total.push(item);
+            else total.push(item as ICharacterType);
           }
         });
         return total;

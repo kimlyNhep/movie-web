@@ -190,7 +190,7 @@ const CreateMovie: React.FC = () => {
       (total: ICharacterType[], item) => {
         values.forEach((id) => {
           if (id === item.id) {
-            total.push(item);
+            total.push(item as ICharacterType);
           }
         });
         return total;
