@@ -13,7 +13,7 @@ export const createUrqlClient = (ssrExchange: any) => {
   const token = Cookie.get('token');
 
   return {
-    url: 'http://localhost:8000/graphql',
+    url: 'https://movie-academy.herokuapp.com/graphql',
     fetchOptions: {
       credentials: 'include' as const,
       headers: {
