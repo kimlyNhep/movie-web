@@ -1,11 +1,10 @@
 {
   "name": "movie-website",
   "version": "1.0.0",
-  "cacheDirectories": [".next/cache"],
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start -p $PORT",
+    "start": "next start",
     "type-check": "tsc",
     "generate": "graphql-codegen --config codegen.yml"
   },
