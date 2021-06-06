@@ -97,14 +97,6 @@ const CreateActor: React.FC<IRegisterProps> = () => {
               <Input style={{ width: '400px' }} size='large' />
             </Form.Item>
             <Form.Item
-              label='Email'
-              required
-              name='email'
-              rules={[{ required: true, message: 'Please insert the email' }]}
-            >
-              <Input size='large' style={{ width: '400px' }} />
-            </Form.Item>
-            <Form.Item
               label='Password'
               name='password'
               tooltip='Password must be longer than 8 character'
@@ -122,11 +114,11 @@ const CreateActor: React.FC<IRegisterProps> = () => {
             </Form.Item>
             <Form.Item className={styles.login}>
               <Button
-                className='w-40'
+                className='w-48'
                 htmlType='submit'
                 style={{ backgroundColor: '#3c5b97', color: 'white' }}
               >
-                Create Account
+                Create New Character
               </Button>
             </Form.Item>
             <Form.Item className={styles.signup}>

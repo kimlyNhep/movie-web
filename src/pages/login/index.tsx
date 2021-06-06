@@ -7,6 +7,7 @@ import { MeDocument, MeQuery, useLoginMutation } from '../../generated/graphql';
 import { toErrorMap } from '../../../utils/errorMap';
 import { Footer } from '../../components/Footer';
 import { NextPage } from 'next';
+import cookie from 'js-cookie';
 
 interface ILoginProps {
   error?: boolean;
@@ -64,6 +65,7 @@ const Login: NextPage<ILoginProps> = () => {
       console.log('Loading...');
     }
     if (response.data?.login.user) {
+      cookie.set('token', response.data.login.accessToken!);
       router.push('/');
     } else if (response.data?.login.errors) {
       const errors = response.data.login.errors;

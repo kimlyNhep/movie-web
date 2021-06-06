@@ -82,7 +82,7 @@ export const UploadDropZone: React.FC<IDropZone> = ({
       </div>
       <aside
         className='mt-8 overflow-hidden flex justify-center'
-        style={{ height }}
+        style={{ minHeight: height }}
       >
         {thumbs}
       </aside>

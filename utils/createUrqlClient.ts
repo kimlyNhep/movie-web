@@ -12,8 +12,14 @@ import { betterUpdateQuery } from './helpers';
 export const createUrqlClient = (ssrExchange: any) => {
   const token = Cookie.get('token');
 
+  let serverLink;
+
+  if (process.env.NODE_ENV === 'production')
+    serverLink = 'https://movie-academy.herokuapp.com/graphql';
+  else serverLink = 'http://127.0.0.1:8000/graphql';
+
   return {
-    url: 'https://movie-academy.herokuapp.com/graphql',
+    url: serverLink,
     fetchOptions: {
       credentials: 'include' as const,
       headers: {
