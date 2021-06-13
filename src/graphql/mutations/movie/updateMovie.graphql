@@ -3,13 +3,15 @@ mutation UpdateMovie(
   $title: String!
   $genres: [String!]!
   $description: String
+  $characters: [CharacterInput!]!
 ) {
   updateMovie(
     options: {
       id: $id
       title: $title
-      genres: $genres
       description: $description
+      characters: $characters
+      genres: $genres
     }
   ) {
     errors {

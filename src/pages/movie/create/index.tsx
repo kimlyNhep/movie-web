@@ -115,6 +115,10 @@ const CreateMovie: React.FC = () => {
         title,
         description,
         genres,
+        characters: characters.map((item) => ({
+          id: item.id,
+          role: item.role!,
+        })),
       },
     });
 
@@ -169,10 +173,6 @@ const CreateMovie: React.FC = () => {
           durations: time,
           releasedDate: date,
           movie: movie.id,
-          characters: characters.map((item) => ({
-            id: item.id,
-            role: item.role!,
-          })),
         },
       });
 
@@ -186,7 +186,7 @@ const CreateMovie: React.FC = () => {
   };
 
   const handleSelectedCharacters = (values: string[]) => {
-    const selectedCharacters = charactersQuery.data?.getAllCharacter.users?.reduce(
+    const selectedCharacters = charactersQuery.data?.getAllCharacter.characters!.reduce(
       (total: ICharacterType[], item) => {
         values.forEach((id) => {
           if (id === item.id) {
@@ -251,6 +251,34 @@ const CreateMovie: React.FC = () => {
               ))}
             </Select>
           </Form.Item>
+          <Form.Item label='Characters' name='characters' labelAlign='left'>
+            <Select
+              size='small'
+              mode='multiple'
+              onChange={handleSelectedCharacters}
+            >
+              {charactersQuery.data?.getAllCharacter.characters?.map(
+                (character) => (
+                  <Select.Option value={character.id} key={character.id}>
+                    {character.username}
+                  </Select.Option>
+                )
+              )}
+            </Select>
+          </Form.Item>
+          {!!characters?.length && (
+            <List
+              size='large'
+              itemLayout='horizontal'
+              dataSource={characters}
+              renderItem={(item) => (
+                <ListCharacters
+                  character={item}
+                  onChangeRole={handleChangeRole}
+                />
+              )}
+            />
+          )}
         </Form>
       ),
     },
@@ -344,32 +372,6 @@ const CreateMovie: React.FC = () => {
           >
             <DatePicker style={{ width: '100%' }} size='small' />
           </Form.Item>
-          <Form.Item label='Characters' name='characters' labelAlign='left'>
-            <Select
-              size='small'
-              mode='multiple'
-              onChange={handleSelectedCharacters}
-            >
-              {charactersQuery.data?.getAllCharacter.users?.map((character) => (
-                <Select.Option value={character.id} key={character.id}>
-                  {character.username}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          {!!characters?.length && (
-            <List
-              size='large'
-              itemLayout='horizontal'
-              dataSource={characters}
-              renderItem={(item) => (
-                <ListCharacters
-                  character={item}
-                  onChangeRole={handleChangeRole}
-                />
-              )}
-            />
-          )}
         </Form>
       ),
     },

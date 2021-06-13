@@ -1,0 +1,13 @@
+mutation CommentMovie($id: String!, $comments: String!) {
+  commentMovies(options: { id: $id, comments: $comments }) {
+    errors {
+      field
+      message
+    }
+    movie {
+      id
+      title
+      photo
+    }
+  }
+}

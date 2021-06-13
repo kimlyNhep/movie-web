@@ -6,7 +6,6 @@ mutation CreateMovieInformation(
   $durations: Int
   $releasedDate: String
   $movie: String!
-  $characters: [CharacterInput!]!
 ) {
   createMovieInformation(
     options: {
@@ -17,7 +16,6 @@ mutation CreateMovieInformation(
       durations: $durations
       released_date: $releasedDate
       movie: $movie
-      characters: $characters
     }
   ) {
     info {

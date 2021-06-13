@@ -8,6 +8,7 @@ import { toErrorMap } from '../../../utils/errorMap';
 import { Footer } from '../../components/Footer';
 import { NextPage } from 'next';
 import cookie from 'js-cookie';
+import withClient from '../../apollo/client';
 
 interface ILoginProps {
   error?: boolean;
@@ -59,6 +60,8 @@ const Login: NextPage<ILoginProps> = () => {
             me: data?.login.user,
           },
         });
+
+        console.log('Cache : ', cache);
       },
     });
     if (loading) {
@@ -66,6 +69,8 @@ const Login: NextPage<ILoginProps> = () => {
     }
     if (response.data?.login.user) {
       cookie.set('token', response.data.login.accessToken!);
+      if (localStorage !== undefined)
+        localStorage.setItem('token', response.data.login.accessToken!);
       router.push('/');
     } else if (response.data?.login.errors) {
       const errors = response.data.login.errors;
@@ -157,4 +162,4 @@ const Login: NextPage<ILoginProps> = () => {
   );
 };
 
-export default Login;
+export default withClient(Login);

@@ -2,9 +2,15 @@ mutation CreateMovie(
   $title: String!
   $description: String
   $genres: [String!]!
+  $characters: [CharacterInput!]!
 ) {
   createMovie(
-    options: { title: $title, description: $description, genres: $genres }
+    options: {
+      title: $title
+      genres: $genres
+      description: $description
+      characters: $characters
+    }
   ) {
     movie {
       id

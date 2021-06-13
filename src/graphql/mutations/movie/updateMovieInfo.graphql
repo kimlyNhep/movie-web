@@ -6,7 +6,6 @@ mutation UpdateMovieInformation(
   $durations: Int
   $releasedDate: String
   $movie: String!
-  $characters: [CharacterInput!]!
   $synopsis: String
   $backgroundInfo: String
 ) {
@@ -19,7 +18,6 @@ mutation UpdateMovieInformation(
       durations: $durations
       released_date: $releasedDate
       movie: $movie
-      characters: $characters
       synopsis: $synopsis
       backgroundInfo: $backgroundInfo
     }

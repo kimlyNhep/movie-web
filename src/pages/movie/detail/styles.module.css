@@ -1,0 +1,3 @@
+.divider :global(.ant-divider) {
+  margin-top: 0;
+}

@@ -36,13 +36,16 @@ const CreateActor: React.FC<IRegisterProps> = () => {
   };
 
   const handleCreateAccount = async (values: any) => {
-    const { username, email, password } = values;
+    const { username } = values;
     await createCharacterRequest({
-      variables: { username, email, password, photo: selectedFile },
+      variables: { username, photo: selectedFile },
+      update: () => {
+        router.push('/');
+      },
     });
 
-    if (data?.createCharacter.user) {
-      router.push('/');
+    if (data?.createCharacter.character) {
+      // router.push('/');
     } else if (data?.createCharacter.errors) {
       const errors = data?.createCharacter.errors;
       setErrors({ error: toErrorMap(errors), status: true });
@@ -95,15 +98,6 @@ const CreateActor: React.FC<IRegisterProps> = () => {
               ]}
             >
               <Input style={{ width: '400px' }} size='large' />
-            </Form.Item>
-            <Form.Item
-              label='Password'
-              name='password'
-              tooltip='Password must be longer than 8 character'
-              required
-              rules={[{ required: true, message: 'Please insert password' }]}
-            >
-              <Input.Password size='large' style={{ width: '400px' }} />
             </Form.Item>
             <Form.Item name='policy' valuePropName='checked'>
               <Checkbox>

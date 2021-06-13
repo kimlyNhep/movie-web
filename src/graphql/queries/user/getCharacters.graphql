@@ -4,10 +4,17 @@ query GetCharacters {
       field
       message
     }
-    users {
+    characters {
       id
-      username
       photo
+      username
+      movieCharacters {
+        movie {
+          id
+          title
+          description
+        }
+      }
     }
   }
 }

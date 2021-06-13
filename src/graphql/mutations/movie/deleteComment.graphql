@@ -1,0 +1,12 @@
+mutation DeleteComment($id: String!) {
+  deleteComment(id: $id) {
+    errors {
+      field
+      message
+    }
+    comment {
+      id
+      text
+    }
+  }
+}

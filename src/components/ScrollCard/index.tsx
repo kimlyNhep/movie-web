@@ -1,4 +1,5 @@
 import { Divider, Tooltip } from 'antd';
+import { useEffect } from 'react';
 import { IMovieType } from '../../types/movie';
 import styles from './styles.module.css';
 
@@ -6,6 +7,10 @@ export const ScrollCard: React.FC<{
   movies?: IMovieType[];
   title: string;
 }> = ({ movies, title }) => {
+  useEffect(() => {
+    console.log(movies);
+  }, [movies]);
+
   return (
     <div className={styles.cards}>
       <span className='font-bold'>{title}</span>

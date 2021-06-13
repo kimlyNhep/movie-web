@@ -1,0 +1,12 @@
+mutation CreateCharacter($photo: Upload!, $username: String!) {
+  createCharacter(username: $username, photo: $photo) {
+    errors {
+      field
+      message
+    }
+    character {
+      photo
+      username
+    }
+  }
+}

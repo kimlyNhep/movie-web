@@ -20,6 +20,7 @@ import {
 } from '../generated/graphql';
 import { useRouter } from 'next/router';
 import { Spin } from 'antd';
+import Cookie from 'js-cookie';
 
 interface ILayoutProps {
   classname?: string;
@@ -96,6 +97,9 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
             me: null,
           },
         });
+
+        Cookie.remove('token');
+        router.push('/');
       },
     });
   };

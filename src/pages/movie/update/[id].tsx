@@ -119,12 +119,19 @@ const CreateMovie: React.FC = () => {
 
   const handleAddMovie = async (values: IMovieForm) => {
     const { title, description, genres } = values;
+
+    console.log('Genres : ', genres);
+
     const response = await updateMovieRequest({
       variables: {
         id,
         title,
         description,
         genres,
+        characters: characters.map((item) => ({
+          id: item.id,
+          role: item.role!,
+        })),
       },
     });
 
@@ -180,10 +187,6 @@ const CreateMovie: React.FC = () => {
           durations: time,
           releasedDate: date,
           movie: movie.id,
-          characters: characters.map((item) => ({
-            id: item.id,
-            role: item.role!,
-          })),
         },
       });
 
@@ -219,19 +222,17 @@ const CreateMovie: React.FC = () => {
       hour: hour,
       minuate: min,
       releasedDate: moment(movie?.info?.released_date),
-      characters: movie?.info?.movieCharacters?.map(
-        (movieCharacter) => movieCharacter.characters.id
+      characters: movie?.movieCharacters?.map(
+        (movieCharacter) => movieCharacter.character.id
       ),
     });
 
-    const newCharacters = movie?.info?.movieCharacters?.map(
-      (movieCharacter) => ({
-        id: movieCharacter.characters.id,
-        username: movieCharacter.characters.username,
-        photo: movieCharacter.characters.photo,
-        role: movieCharacter.role,
-      })
-    );
+    const newCharacters = movie?.movieCharacters?.map((movieCharacter) => ({
+      id: movieCharacter.character.id,
+      username: movieCharacter.character.username,
+      photo: movieCharacter.character.photo,
+      role: movieCharacter.role,
+    }));
 
     setCharacters(newCharacters as ICharacterType[]);
 
@@ -252,7 +253,7 @@ const CreateMovie: React.FC = () => {
   };
 
   const handleSelectedCharacters = (values: string[]) => {
-    const selectedCharacters = charactersQuery.data?.getAllCharacter.users?.reduce(
+    const selectedCharacters = charactersQuery.data?.getAllCharacter.characters?.reduce(
       (total: ICharacterType[], item) => {
         values.forEach((id) => {
           if (id === item.id) {
@@ -311,6 +312,34 @@ const CreateMovie: React.FC = () => {
               ))}
             </Select>
           </Form.Item>
+          <Form.Item label='Characters' name='characters' labelAlign='left'>
+            <Select
+              size='small'
+              mode='multiple'
+              onChange={handleSelectedCharacters}
+            >
+              {charactersQuery.data?.getAllCharacter.characters!.map(
+                (character) => (
+                  <Select.Option value={character.id} key={character.id}>
+                    {character.username}
+                  </Select.Option>
+                )
+              )}
+            </Select>
+          </Form.Item>
+          {!!characters?.length && (
+            <List
+              size='large'
+              itemLayout='horizontal'
+              dataSource={characters}
+              renderItem={(item) => (
+                <ListCharacters
+                  character={item}
+                  onChangeRole={handleChangeRole}
+                />
+              )}
+            />
+          )}
         </Form>
       ),
     },
@@ -404,32 +433,6 @@ const CreateMovie: React.FC = () => {
           >
             <DatePicker style={{ width: '100%' }} size='small' />
           </Form.Item>
-          <Form.Item label='Characters' name='characters' labelAlign='left'>
-            <Select
-              size='small'
-              mode='multiple'
-              onChange={handleSelectedCharacters}
-            >
-              {charactersQuery.data?.getAllCharacter.users?.map((character) => (
-                <Select.Option value={character.id} key={character.id}>
-                  {character.username}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          {!!characters?.length && (
-            <List
-              size='large'
-              itemLayout='horizontal'
-              dataSource={characters}
-              renderItem={(item) => (
-                <ListCharacters
-                  character={item}
-                  onChangeRole={handleChangeRole}
-                />
-              )}
-            />
-          )}
         </Form>
       ),
     },

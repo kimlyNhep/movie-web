@@ -1,8 +1,16 @@
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Rate } from 'antd';
 import styles from './styles.module.css';
 import cls from 'classnames';
-import { RatingMovies, useRatingMovieMutation } from '../../generated/graphql';
+import {
+  GetMovieDocument,
+  MeDocument,
+  MeQuery,
+  RatingMovies,
+  useRatingMovieMutation,
+} from '../../generated/graphql';
+import { useApolloClient } from '@apollo/client';
 
 interface IRatingBoardProps {
   movieId: string;
@@ -15,6 +23,11 @@ export const RatingBoard: React.FC<IRatingBoardProps> = ({
 }) => {
   const [ratingMovieRequest] = useRatingMovieMutation();
   const [ratingValue, setRatingValue] = useState(0);
+  const [isAuth, setIsAuth] = useState<boolean>();
+  const client = useApolloClient();
+
+  const router = useRouter();
+  const id = router.query.id as string;
 
   const handleSubmitRating = async () => {
     await ratingMovieRequest({
@@ -22,6 +35,12 @@ export const RatingBoard: React.FC<IRatingBoardProps> = ({
         ratedPoint: ratingValue * 2,
         movieId,
       },
+      refetchQueries: [
+        {
+          query: GetMovieDocument,
+          variables: { id },
+        },
+      ],
     });
   };
 
@@ -33,6 +52,19 @@ export const RatingBoard: React.FC<IRatingBoardProps> = ({
       setRatingValue(ratedValue! / 2 || 0);
     }
   }, [ratedPoint]);
+
+  const fetchUser = async () => {
+    try {
+      const currentUser = await client.query<MeQuery>({ query: MeDocument });
+      if (currentUser) setIsAuth(true);
+    } catch (err) {
+      setIsAuth(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   return (
     <div className='w-full'>
@@ -50,14 +82,16 @@ export const RatingBoard: React.FC<IRatingBoardProps> = ({
               className='mt-0'
               onChange={(value) => setRatingValue(value)}
             />
-            <Button
-              size='small'
-              type='primary'
-              className='ml-5'
-              onClick={handleSubmitRating}
-            >
-              Apply
-            </Button>
+            {isAuth && (
+              <Button
+                size='small'
+                type='primary'
+                className='ml-5'
+                onClick={handleSubmitRating}
+              >
+                Apply
+              </Button>
+            )}
           </div>
         </div>
       </Card>

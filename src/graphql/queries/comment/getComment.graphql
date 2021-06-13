@@ -1,0 +1,18 @@
+query GetComment($id: String!) {
+  getComment(id: $id) {
+    comment {
+      id
+      text
+      user {
+        id
+        username
+        photo
+      }
+      createdAt
+    }
+    errors {
+      field
+      message
+    }
+  }
+}

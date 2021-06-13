@@ -5,38 +5,30 @@ query GetMovies {
       message
     }
     movies {
+      id
+      description
+      title
+      photo
       creator {
-        email
-        username
         id
+        username
+        email
         role
       }
       genres {
-        name
         id
+        name
       }
-      description
-      photo
-      title
-      id
       info {
         id
-        duration
-        episode
         producer
         released_date
         status
         type
-        backgroundInfo
+        episode
+        duration
         synopsis
-        movieCharacters {
-          role
-          characters {
-            id
-            username
-            photo
-          }
-        }
+        backgroundInfo
       }
     }
   }

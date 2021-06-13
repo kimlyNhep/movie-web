@@ -1,0 +1,22 @@
+query GetComments($mid: String!) {
+  getComments(movieId: $mid) {
+    errors {
+      field
+      message
+    }
+    comments {
+      comment {
+        id
+        text
+        createdAt
+        user {
+          id
+          photo
+          username
+        }
+      }
+      isDelete
+      isEdit
+    }
+  }
+}

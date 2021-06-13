@@ -21,3 +21,14 @@ export interface IMovieInfoType {
   status: StatusType;
   type: MovieType;
 }
+
+export interface IReviewsType {
+  comment: {
+    id: string;
+    text: string;
+    createdAt: string;
+    user: IUserType;
+  };
+  isEdit: boolean;
+  isDelete: boolean;
+}

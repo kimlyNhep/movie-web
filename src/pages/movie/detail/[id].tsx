@@ -8,6 +8,9 @@ import { ScoreBoard } from '../../../components/ScoreBoard';
 import { RatingBoard } from '../../../components/RatingBoard';
 import { ListCharacters } from '../../../components/ListCharacters';
 import { ICharacterType } from '../../../types/user';
+import Reviews from '../../../components/Reviews';
+import cx from 'classnames';
+import styles from './styles.module.css';
 
 const MovieDetail = () => {
   const router = useRouter();
@@ -21,14 +24,12 @@ const MovieDetail = () => {
   let characters: ICharacterType[] = [];
 
   if (data?.getMovie.movie) {
-    characters = data?.getMovie.movie?.info?.movieCharacters?.map(
-      (character) => ({
-        id: character.characters.id,
-        username: character.characters.username,
-        photo: character.characters.photo,
-        role: character.role,
-      })
-    ) as ICharacterType[];
+    characters = data?.getMovie.movie.movieCharacters?.map((character) => ({
+      id: character.character.id,
+      username: character.character.username,
+      photo: character.character.photo,
+      role: character.role,
+    })) as ICharacterType[];
   }
 
   const handleUpdateMovie = () => {
@@ -37,7 +38,7 @@ const MovieDetail = () => {
 
   return (
     <Layout>
-      <div className='w-full mb-5'>
+      <div className='w-full mb-10'>
         <div className='flex flex-col w-full'>
           <div className='flex justify-between'>
             <div className='flex flex-col'>
@@ -57,7 +58,11 @@ const MovieDetail = () => {
         </div>
         <div className='flex' style={{ height: '90%' }}>
           <MovieSide movie={data?.getMovie.movie as IMovieType} />
-          <Divider type='vertical' className='h-full bg-gray-400'></Divider>
+          <Divider
+            type='vertical'
+            className='bg-gray-400'
+            style={{ height: '100%' }}
+          ></Divider>
           <div className='w-full'>
             <ScoreBoard
               ratedPoint={data?.getMovie.movie?.ratingMovies as RatingMovies[]}
@@ -76,9 +81,9 @@ const MovieDetail = () => {
               <Divider className='my-1 bg-gray-300' />
               <div>{data?.getMovie.movie?.info?.backgroundInfo}</div>
             </div>
-            <div className='mt-4'>
+            <div className={cx(styles.divider, 'mt-4')}>
               <strong>Characters</strong>
-              <Divider className='my-1 bg-gray-300' />
+              <Divider className='mt-0 bg-gray-300' />
               {!!characters?.length && (
                 <List
                   size='large'
@@ -87,6 +92,11 @@ const MovieDetail = () => {
                   renderItem={(item) => <ListCharacters character={item} />}
                 />
               )}
+            </div>
+            <div className={styles.divider}>
+              <strong>Reviews</strong>
+              <Divider className='mt-0 bg-gray-400' />
+              <Reviews />
             </div>
           </div>
         </div>
