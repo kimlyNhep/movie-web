@@ -1,0 +1,13 @@
+query getCurrentMovieState($mid: String!) {
+  __typename
+  getCurrentMovieState(mid: $mid) {
+    completed
+    drop
+    planToWatch
+    watching
+    errors {
+      field
+      message
+    }
+  }
+}

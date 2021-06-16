@@ -120,7 +120,7 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
             {data?.me?.username && (
               <Button
                 type='link'
-                href='/profile'
+                href={`/profile/${data.me.id}`}
                 style={{ fontSize: '16px', paddingRight: '1rem' }}
               >
                 {data?.me?.username}
@@ -134,7 +134,7 @@ const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
         </div>
         <Layout className={styles.layout}>
           <Navbar />
-          <div className='flex bg-white border p-3'>{children}</div>
+          <div className='flex bg-white border p-3 h-full'>{children}</div>
         </Layout>
       </div>
       <Footer />

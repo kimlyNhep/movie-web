@@ -10,6 +10,7 @@ import {
   MeQuery,
   useRegisterMutation,
 } from '../../generated/graphql';
+import cookie from 'js-cookie';
 
 interface IRegisterProps {}
 
@@ -22,7 +23,19 @@ const Signup: React.FC<IRegisterProps> = () => {
   const router = useRouter();
   const [errors, setErrors] = useState<IErrorState>();
   const [message, setMessage] = useState<JSX.Element | null>();
-  const [registerRequest, { data }] = useRegisterMutation();
+  const [registerRequest] = useRegisterMutation({
+    onCompleted({ register }) {
+      if (register.accessToken) {
+        cookie.set('token', register.accessToken);
+        if (localStorage !== undefined)
+          localStorage.setItem('token', register.accessToken);
+        router.push('/');
+      } else if (register.errors) {
+        const errors = register.errors;
+        setErrors({ error: toErrorMap(errors), status: true });
+      }
+    },
+  });
 
   const hanldeGoHomePage = async () => {
     await router.push('/');
@@ -45,20 +58,11 @@ const Signup: React.FC<IRegisterProps> = () => {
         });
       },
     });
-
-    if (data?.register.user?.username) {
-      router.push('/');
-    } else if (data?.register.errors) {
-      const errors = data?.register.errors;
-      setErrors({ error: toErrorMap(errors), status: true });
-    } else {
-      console.log('Something went wrong');
-    }
   };
 
   const handleCreateActor = () => {
     router.push('/signup/actor');
-  }
+  };
 
   useEffect(() => {
     if (errors?.status) {
@@ -159,7 +163,7 @@ const Signup: React.FC<IRegisterProps> = () => {
               </Button>
             </Form.Item>
             <Form.Item>
-            <Button
+              <Button
                 onClick={handleCreateActor}
                 className='w-40 mx-auto'
                 style={{ backgroundColor: '#3c5b97', color: 'white' }}

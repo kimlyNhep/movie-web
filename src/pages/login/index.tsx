@@ -8,7 +8,6 @@ import { toErrorMap } from '../../../utils/errorMap';
 import { Footer } from '../../components/Footer';
 import { NextPage } from 'next';
 import cookie from 'js-cookie';
-import withClient from '../../apollo/client';
 
 interface ILoginProps {
   error?: boolean;
@@ -24,7 +23,19 @@ const Login: NextPage<ILoginProps> = () => {
   const router = useRouter();
   const [form] = Form.useForm();
   const [message, setMessage] = useState<JSX.Element | null>();
-  const [loginRequest, { loading }] = useLoginMutation();
+  const [loginRequest, { loading }] = useLoginMutation({
+    onCompleted({ login }) {
+      if (login.accessToken) {
+        cookie.set('token', login.accessToken);
+        if (localStorage !== undefined)
+          localStorage.setItem('token', login.accessToken);
+        router.push('/');
+      } else if (login.errors) {
+        const errors = login.errors;
+        setErrors({ error: toErrorMap(errors), status: true });
+      }
+    },
+  });
 
   const handleGoHomePage = () => {
     router.push('/');
@@ -38,6 +49,7 @@ const Login: NextPage<ILoginProps> = () => {
     if (errors?.status) {
       setMessage(
         <Alert
+          className='pb-2'
           message={`${errors.error.field} ${errors.error.message}`}
           type='error'
         />
@@ -51,7 +63,7 @@ const Login: NextPage<ILoginProps> = () => {
 
   const handleLogin = async () => {
     const { username, password } = form.getFieldsValue();
-    const response = await loginRequest({
+    await loginRequest({
       variables: { username, password },
       update: (cache, { data }) => {
         cache.writeQuery<MeQuery>({
@@ -60,21 +72,10 @@ const Login: NextPage<ILoginProps> = () => {
             me: data?.login.user,
           },
         });
-
-        console.log('Cache : ', cache);
       },
     });
     if (loading) {
       console.log('Loading...');
-    }
-    if (response.data?.login.user) {
-      cookie.set('token', response.data.login.accessToken!);
-      if (localStorage !== undefined)
-        localStorage.setItem('token', response.data.login.accessToken!);
-      router.push('/');
-    } else if (response.data?.login.errors) {
-      const errors = response.data.login.errors;
-      setErrors({ error: toErrorMap(errors), status: true });
     }
   };
 
@@ -155,11 +156,11 @@ const Login: NextPage<ILoginProps> = () => {
             </Form>
           </div>
         </Card>
-        <div className='w-80 mx-auto mt-2'>{message}</div>
+        <div className='w-80 mx-auto mt-2 mb-2'>{message}</div>
       </div>
       <Footer />
     </>
   );
 };
 
-export default withClient(Login);
+export default Login;

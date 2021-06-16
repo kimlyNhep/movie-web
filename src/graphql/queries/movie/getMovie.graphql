@@ -47,6 +47,13 @@ query GetMovie($id: String!) {
         }
         role
       }
+      movieState {
+        watching
+        completed
+        planToWatch
+        drop
+      }
+      point
     }
   }
 }

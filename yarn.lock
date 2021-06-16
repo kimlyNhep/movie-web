@@ -1206,7 +1206,7 @@
   resolved "https://registry.yarnpkg.com/@types/zen-observable/-/zen-observable-0.8.2.tgz#808c9fa7e4517274ed555fa158f2de4b4f468e71"
   integrity sha512-HrCIVMLjE1MOozVoD86622S7aunluLb2PJdPfb3nYiEtohm8mIB/vyv0Fd37AdeMFrTUQXEunw78YloMA3Qilg==
 
-"@urql/core@>=1.14.0", "@urql/core@>=2.0.0", "@urql/core@^2.0.0":
+"@urql/core@>=1.14.0", "@urql/core@>=2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@urql/core/-/core-2.0.0.tgz#b4936dd51fe84cb570506d9ee2579149689f7535"
   integrity sha512-Qj24CG8ullqZZsYmjrSH0JhH+nY7kj8GbVbA9si3KUjlYs75A/MBQU3i97j6oWyGldDBapyis2CfaQeXKbv8rA==
@@ -4360,13 +4360,6 @@ next-apollo@^5.0.4:
   resolved "https://registry.yarnpkg.com/next-apollo/-/next-apollo-5.0.4.tgz#01952cd1803a663672bb18e10e0a09800ebc76fa"
   integrity sha512-nkm8W8XmZiLziFFa7X8FxxbanRx6pRWhkhDIIAprD1A5siSNwZnMPW3GbjwnOoQLyFH8rMHS0SZZ6AAmSWzF9Q==
 
-next-urql@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/next-urql/-/next-urql-3.0.1.tgz#552f8e317abe13f70251db77c0005c8e0f969854"
-  integrity sha512-Owu+Y+svp17vYmAR+qJlLITQswSF00kdmys125syKG5uH4R0l3rD1wThEX64gWdUpSj4+P8jhP1wZQrrRJa8KA==
-  dependencies:
-    react-ssr-prepass "^1.2.1"
-
 next@latest:
   version "10.1.3"
   resolved "https://registry.yarnpkg.com/next/-/next-10.1.3.tgz#e26e8371343a42bc2ba9be5cb253a7d324d03673"
@@ -5535,11 +5528,6 @@ react-refresh@0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz#721d4657672d400c5e3c75d063c4a85fb2d5d68f"
   integrity sha512-X8jZHc7nCMjaCqoU+V2I0cOhNW+QMBwSUkeXnTi8IPe6zaRWfn60ZzvFDZqWPfmSJfjub7dDW1SP0jaHWLu/hg==
-
-react-ssr-prepass@^1.2.1:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/react-ssr-prepass/-/react-ssr-prepass-1.4.0.tgz#33a3db19414f0f8f9f3f781c88f760ae366b4f51"
-  integrity sha512-0SzdmiQUtHvhxCabHg9BI/pkJfijGkQ0jQL6fC4YFy7idaDOuaiQLsajIkkNxffFXtJFHIWFITlve2WB88e0Jw==
 
 react@^17.0.1:
   version "17.0.2"
@@ -6726,14 +6714,6 @@ url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
-
-urql@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/urql/-/urql-2.0.2.tgz#53e8f22747eff4550e46b9bbc8b44aa9c6de3e68"
-  integrity sha512-ku5lT0vq7Efpd6Mg1r40C/z39GbGxFtuK2+le26+v125cQL7OVGzE2XzG3jSiHa5m6abCoZO9xS6N2QIfoJ/gg==
-  dependencies:
-    "@urql/core" "^2.0.0"
-    wonka "^4.0.14"
 
 use-subscription@1.5.1:
   version "1.5.1"

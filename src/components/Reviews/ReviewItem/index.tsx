@@ -3,7 +3,7 @@ import React, { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { IReviewsType } from '../../../types/movie';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
-  GetMovieDocument,
+  GetCommentsDocument,
   useDeleteCommentMutation,
   useGetCommentLazyQuery,
   useUpdateCommentMutation,
@@ -22,7 +22,7 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
   const [deleteRequest] = useDeleteCommentMutation();
 
   const [getCurrentComment, { data: currentComment }] = useGetCommentLazyQuery({
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'no-cache',
   });
 
   const { TextArea } = Input;
@@ -42,8 +42,8 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
       },
       refetchQueries: [
         {
-          query: GetMovieDocument,
-          variables: { id: movieId },
+          query: GetCommentsDocument,
+          variables: { mid: movieId },
         },
       ],
     });
@@ -71,8 +71,8 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
       },
       refetchQueries: [
         {
-          query: GetMovieDocument,
-          variables: { id: movieId },
+          query: GetCommentsDocument,
+          variables: { mid: movieId },
         },
       ],
       update: () => {

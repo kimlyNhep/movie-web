@@ -1,0 +1,9 @@
+query getMovieState {
+  __typename
+  getMovieState {
+    completed
+    drop
+    planToWatch
+    watching
+  }
+}

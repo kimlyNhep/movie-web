@@ -1,0 +1,40 @@
+query getRankingMovies {
+  __typename
+  getRankingMovies {
+    errors {
+      field
+      message
+    }
+    movies {
+      rank
+      rankingMovie {
+        id
+        title
+        description
+        photo
+        creator {
+          id
+          username
+          email
+          role
+        }
+        genres {
+          id
+          name
+        }
+        info {
+          id
+          producer
+          released_date
+          status
+          type
+          episode
+          duration
+          synopsis
+          backgroundInfo
+        }
+        point
+      }
+    }
+  }
+}

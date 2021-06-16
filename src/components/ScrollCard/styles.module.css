@@ -7,9 +7,15 @@
 .wrapper .item {
   min-width: 160px;
   max-height: 250px;
+  max-width: 160px;
   text-align: center;
   background-color: #ddd;
   margin-right: 2px;
+}
+
+.wrapper .item img {
+  max-height: 100%;
+  max-width: 100%;
 }
 
 .wrapper .item:hover {

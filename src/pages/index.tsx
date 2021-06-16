@@ -2,14 +2,13 @@ import { ScrollCard } from '../components/ScrollCard';
 import { LeftSide } from '../components/LeftSide';
 import { Layout } from 'antd';
 import MainLayout from '../layout';
-import { useGetMoviesQuery } from '../generated/graphql';
-import { IMovieType } from '../types/movie';
+import { RankingType, useGetRankingMoviesQuery } from '../generated/graphql';
 
 const { Content } = Layout;
 
 const Home = () => {
-  const { data } = useGetMoviesQuery();
-  const movies = data?.getMovies.movies as IMovieType[];
+  const { data } = useGetRankingMoviesQuery();
+  const movies = data?.getRankingMovies.movies as RankingType[];
 
   return (
     <MainLayout>

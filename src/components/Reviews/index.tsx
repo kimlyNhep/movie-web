@@ -3,7 +3,6 @@ import { ReviewItem } from './ReviewItem';
 import { List, Divider, Input, Button } from 'antd';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
-  GetMovieDocument,
   MeDocument,
   MeQuery,
   useCommentMovieMutation,
@@ -11,13 +10,11 @@ import {
   useMeQuery,
 } from '../../generated/graphql';
 import { IReviewsType } from '../../types/movie';
-import withClient from '../../apollo/client';
 import { useApolloClient } from '@apollo/client';
 
 const Reviews: React.FC = () => {
   const { data } = useMeQuery();
   const [commentValue, setCommentvalue] = useState<string>();
-  const [commentRequest] = useCommentMovieMutation();
   const [isAuth, setIsAuth] = useState<boolean>();
   const router = useRouter();
   const client = useApolloClient();
@@ -25,8 +22,19 @@ const Reviews: React.FC = () => {
   const { TextArea } = Input;
   const id = router.query.id as string;
 
-  const { data: loadComments, loading: loadingComments } = useGetCommentsQuery({
+  const {
+    data: loadComments,
+    loading: loadingComments,
+    refetch,
+  } = useGetCommentsQuery({
     variables: { mid: id },
+  });
+  const [commentRequest] = useCommentMovieMutation({
+    onCompleted({ commentMovies }) {
+      if (commentMovies.movie) {
+        refetch();
+      }
+    },
   });
 
   const handleAddReview = async () => {
@@ -38,12 +46,6 @@ const Reviews: React.FC = () => {
             setCommentvalue('');
           }
         },
-        refetchQueries: [
-          {
-            query: GetMovieDocument,
-            variables: { id },
-          },
-        ],
       });
     }
   };
@@ -110,4 +112,4 @@ const Reviews: React.FC = () => {
   );
 };
 
-export default withClient(Reviews);
+export default Reviews;

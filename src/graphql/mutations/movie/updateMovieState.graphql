@@ -1,0 +1,16 @@
+mutation updateMovieState($mid: String!, $state: String!) {
+  updateMovieState(mid: $mid, options: $state) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      username
+    }
+    movie {
+      id
+      title
+    }
+  }
+}

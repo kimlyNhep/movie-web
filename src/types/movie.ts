@@ -32,3 +32,10 @@ export interface IReviewsType {
   isEdit: boolean;
   isDelete: boolean;
 }
+
+export enum MovieStateType {
+  Watching = 'Watching',
+  Plantowatch = 'Plantowatch',
+  Completed = 'Completed',
+  Drop = 'Drop',
+}

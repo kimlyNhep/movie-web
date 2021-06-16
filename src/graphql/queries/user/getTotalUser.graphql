@@ -1,0 +1,6 @@
+query getTotalUsers {
+  __typename
+  getTotalUsers {
+    total
+  }
+}

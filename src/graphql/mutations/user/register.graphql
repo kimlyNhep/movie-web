@@ -15,6 +15,7 @@ mutation Register(
     user {
       ...UserFragment
     }
+    accessToken
     errors {
       ...ErrorFragment
     }

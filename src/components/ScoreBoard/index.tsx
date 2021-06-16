@@ -2,25 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { Card, Divider } from 'antd';
 import styles from './styles.module.css';
 import cls from 'classnames';
-import { RatingMovies } from '../../generated/graphql';
+import { useGetTotalUsersQuery } from '../../generated/graphql';
 
 interface IScoreBoardProp {
-  ratedPoint?: RatingMovies[];
+  ratedPoint?: number;
+  ratedUser: number;
+  rank: number;
 }
 
-export const ScoreBoard: React.FC<IScoreBoardProp> = ({ ratedPoint }) => {
+export const ScoreBoard: React.FC<IScoreBoardProp> = ({
+  ratedPoint,
+  ratedUser,
+  rank,
+}) => {
   const [ratingValue, setRatingValue] = useState(0);
   const [totalRatedUsers, setTotalRatedUsers] = useState(0);
+  const { data } = useGetTotalUsersQuery();
 
   useEffect(() => {
     if (ratedPoint) {
-      const ratedValue = ratedPoint?.reduce((totalPoint, point) => {
-        return (totalPoint + point.ratedPoint) / ratedPoint.length;
-      }, 0);
-      setRatingValue(ratedValue || 0);
-      setTotalRatedUsers(ratedPoint.length);
+      const ratedValue = Number(ratedPoint / data?.getTotalUsers.total!);
+
+      setRatingValue(Number(ratedValue.toFixed(1)));
+      setTotalRatedUsers(ratedUser);
     }
-  }, [ratedPoint]);
+  }, [ratedPoint, data]);
 
   return (
     <div className='w-full'>
@@ -38,10 +44,14 @@ export const ScoreBoard: React.FC<IScoreBoardProp> = ({ ratedPoint }) => {
             <div className='text-2xl text-center'>{ratingValue}</div>
             <div className='text-xs text-center'>{totalRatedUsers} users</div>
           </div>
-          <Divider className='bg-gray-300 h-full' type='vertical' />
+          <Divider
+            className='bg-gray-300'
+            type='vertical'
+            style={{ height: '100%' }}
+          />
           <div className='flex items-center ml-3'>
             <div className='text-xl'>Ranked</div>
-            <div className='ml-1 text-2xl'># 23</div>
+            <div className='ml-1 text-2xl'># {rank}</div>
           </div>
         </div>
       </Card>
