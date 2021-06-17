@@ -1,18 +1,18 @@
 import { Button, Divider } from 'antd';
 import { useRouter } from 'next/router';
-import { ProfileSide } from '../../components/ProfileSide';
+import { ProfileSide } from '../../../components/ProfileSide';
 import {
   MeDocument,
   MeQuery,
   useGetMovieStateQuery,
   useMeQuery,
   UserRoles,
-} from '../../generated/graphql';
-import Layout from '../../layout';
-import { IUserType } from '../../types/user';
+} from '../../../generated/graphql';
+import Layout from '../../../layout';
+import { IUserType } from '../../../types/user';
 import cx from 'classnames';
 import styles from './styles.module.css';
-import { useApolloClient } from '@apollo/client';
+import { ApolloQueryResult, useApolloClient } from '@apollo/client';
 import { useEffect } from 'react';
 import { useState } from 'react';
 
@@ -22,6 +22,7 @@ const ProfileDetail = () => {
   const client = useApolloClient();
   const [isAdmin, setIsAdmin] = useState<boolean>();
   const { data: movieStateData } = useGetMovieStateQuery();
+  const [currentUser, setCurrentUser] = useState<ApolloQueryResult<MeQuery>>();
 
   const handleAddMovie = () => {
     router.push('/movie/create');
@@ -31,12 +32,18 @@ const ProfileDetail = () => {
     router.push('/genre/create');
   };
 
-  // const id = router.query.id as string;
+  const id = router.query.id as string;
 
   const fetchUser = async () => {
     const currentUser = await client.query<MeQuery>({ query: MeDocument });
+    setCurrentUser(currentUser);
+
     const adminState = currentUser.data.me?.role === UserRoles.Admin;
     setIsAdmin(adminState);
+  };
+
+  const handleRoutingMovieList = () => {
+    router.push(`/profile/${id}/movies`);
   };
 
   useEffect(() => {
@@ -46,6 +53,9 @@ const ProfileDetail = () => {
   return (
     <Layout>
       <div className={cx(styles.profileInfo, 'flex flex-col h-full')}>
+        <strong className='mb-2 text-center'>
+          {currentUser?.data.me?.username}
+        </strong>
         <ProfileSide profile={data?.me as IUserType} />
         <div className='mt-1 bg-gray-100'>
           <strong>Status</strong>
@@ -56,7 +66,12 @@ const ProfileDetail = () => {
         <div className='bg-gray-100'>
           <strong>Last Online</strong>
         </div>
-        <Button type='primary' size='small' className='mt-1'>
+        <Button
+          type='primary'
+          size='small'
+          className='mt-1'
+          onClick={handleRoutingMovieList}
+        >
           Movie List
         </Button>
         <div className='mt-5 flex justify-between'>

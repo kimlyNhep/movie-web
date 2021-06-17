@@ -1,0 +1,15 @@
+query getMoviesByUser {
+  __typename
+  getMoviesByUser {
+    errors {
+      field
+      message
+    }
+    movies {
+      id
+      title
+      photo
+      description
+    }
+  }
+}

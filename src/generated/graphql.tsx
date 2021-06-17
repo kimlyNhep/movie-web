@@ -324,6 +324,7 @@ export type Query = {
   getMovies: MoviesResponse;
   getMoviesByYear: MoviesResponse;
   getRankingMovies: MovieRankingResponse;
+  getMoviesByUser: MoviesResponse;
   getAllCharacter: CharactersResponse;
   getComments: CommentsResponse;
   getComment: CommentResponse;
@@ -930,6 +931,23 @@ export type GetMoviesQuery = (
   ) }
 );
 
+export type GetMoviesByUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMoviesByUserQuery = (
+  { __typename: 'Query' }
+  & { getMoviesByUser: (
+    { __typename?: 'MoviesResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorResponse' }
+      & Pick<ErrorResponse, 'field' | 'message'>
+    )>>, movies?: Maybe<Array<(
+      { __typename?: 'Movie' }
+      & Pick<Movie, 'id' | 'title' | 'photo' | 'description'>
+    )>> }
+  ) }
+);
+
 export type GetRankingMoviesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1000,7 +1018,7 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = (
-  { __typename?: 'Query' }
+  { __typename: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'photo' | 'role' | 'username' | 'email'>
@@ -2042,6 +2060,50 @@ export function useGetMoviesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type GetMoviesQueryHookResult = ReturnType<typeof useGetMoviesQuery>;
 export type GetMoviesLazyQueryHookResult = ReturnType<typeof useGetMoviesLazyQuery>;
 export type GetMoviesQueryResult = Apollo.QueryResult<GetMoviesQuery, GetMoviesQueryVariables>;
+export const GetMoviesByUserDocument = gql`
+    query getMoviesByUser {
+  __typename
+  getMoviesByUser {
+    errors {
+      field
+      message
+    }
+    movies {
+      id
+      title
+      photo
+      description
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMoviesByUserQuery__
+ *
+ * To run a query within a React component, call `useGetMoviesByUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMoviesByUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMoviesByUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMoviesByUserQuery(baseOptions?: Apollo.QueryHookOptions<GetMoviesByUserQuery, GetMoviesByUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMoviesByUserQuery, GetMoviesByUserQueryVariables>(GetMoviesByUserDocument, options);
+      }
+export function useGetMoviesByUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMoviesByUserQuery, GetMoviesByUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMoviesByUserQuery, GetMoviesByUserQueryVariables>(GetMoviesByUserDocument, options);
+        }
+export type GetMoviesByUserQueryHookResult = ReturnType<typeof useGetMoviesByUserQuery>;
+export type GetMoviesByUserLazyQueryHookResult = ReturnType<typeof useGetMoviesByUserLazyQuery>;
+export type GetMoviesByUserQueryResult = Apollo.QueryResult<GetMoviesByUserQuery, GetMoviesByUserQueryVariables>;
 export const GetRankingMoviesDocument = gql`
     query getRankingMovies {
   __typename
@@ -2197,6 +2259,7 @@ export type GetTotalUsersLazyQueryHookResult = ReturnType<typeof useGetTotalUser
 export type GetTotalUsersQueryResult = Apollo.QueryResult<GetTotalUsersQuery, GetTotalUsersQueryVariables>;
 export const MeDocument = gql`
     query Me {
+  __typename
   me {
     id
     photo
