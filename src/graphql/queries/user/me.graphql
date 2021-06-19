@@ -1,5 +1,4 @@
 query Me {
-  __typename
   me {
     id
     photo

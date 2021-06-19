@@ -1018,7 +1018,7 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = (
-  { __typename: 'Query' }
+  { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'photo' | 'role' | 'username' | 'email'>
@@ -2259,7 +2259,6 @@ export type GetTotalUsersLazyQueryHookResult = ReturnType<typeof useGetTotalUser
 export type GetTotalUsersQueryResult = Apollo.QueryResult<GetTotalUsersQuery, GetTotalUsersQueryVariables>;
 export const MeDocument = gql`
     query Me {
-  __typename
   me {
     id
     photo

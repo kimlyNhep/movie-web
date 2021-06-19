@@ -84,7 +84,10 @@ export const RatingBoard: React.FC<IRatingBoardProps> = ({
 
   const fetchUser = async () => {
     try {
-      const currentUser = await client.query<MeQuery>({ query: MeDocument });
+      const currentUser = await client.query<MeQuery>({
+        query: MeDocument,
+        fetchPolicy: 'cache-only',
+      });
       if (currentUser) {
         setCurrentUser(currentUser);
         setIsAuth(true);

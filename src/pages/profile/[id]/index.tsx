@@ -17,7 +17,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 
 const ProfileDetail = () => {
-  const { data } = useMeQuery();
+  const { data } = useMeQuery({ fetchPolicy: 'cache-only' });
   const router = useRouter();
   const client = useApolloClient();
   const [isAdmin, setIsAdmin] = useState<boolean>();

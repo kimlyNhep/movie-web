@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { ReviewItem } from './ReviewItem';
 import { List, Divider, Input, Button } from 'antd';
-import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   MeDocument,
   MeQuery,
@@ -11,9 +11,10 @@ import {
 } from '../../generated/graphql';
 import { IReviewsType } from '../../types/movie';
 import { useApolloClient } from '@apollo/client';
+import { RichEditor } from '../RichEditor';
 
 const Reviews: React.FC = () => {
-  const { data } = useMeQuery();
+  const { data } = useMeQuery({ fetchPolicy: 'cache-only' });
   const [commentValue, setCommentvalue] = useState<string>();
   const [isAuth, setIsAuth] = useState<boolean>();
   const router = useRouter();
@@ -50,8 +51,9 @@ const Reviews: React.FC = () => {
     }
   };
 
-  const handleCommentChange = (event: BaseSyntheticEvent) => {
-    setCommentvalue(event.target.value);
+  const handleCommentChange = (value: string) => {
+    setCommentvalue(value);
+    console.log(value);
   };
 
   const fetchUser = async () => {
@@ -88,11 +90,10 @@ const Reviews: React.FC = () => {
                   width='50'
                 />
               </div>
-              <TextArea
-                className='w-full'
-                placeholder='Write a review'
-                value={commentValue}
-                onChange={handleCommentChange}
+              <RichEditor
+                theme='snow'
+                content={commentValue}
+                onChange={(content: string) => handleCommentChange(content)}
               />
             </div>
             <div className='flex w-full justify-end'>

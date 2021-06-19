@@ -2,6 +2,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { createUploadLink } from 'apollo-upload-client';
 import Cookie from 'js-cookie';
 import React from 'react';
+import { TypedTypePolicies } from '../generated/apollo-helpers';
 
 const withClient = <T extends object>(Component: React.ComponentType<T>) => (
   props: any
@@ -25,10 +26,24 @@ const withClient = <T extends object>(Component: React.ComponentType<T>) => (
       credentials: 'include' as const,
     });
 
+  const typePolicies: TypedTypePolicies = {
+    Query: {
+      fields: {
+        me: {
+          read(me) {
+            return me;
+          },
+        },
+      },
+    },
+  };
+
   const client = new ApolloClient({
-    ssrMode: true,
+    ssrMode: false,
     link,
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies,
+    }),
   });
 
   return (

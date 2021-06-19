@@ -27,7 +27,7 @@ interface ILayoutProps {
 }
 
 const MainLayout: React.FC<ILayoutProps> = ({ classname, children }) => {
-  const { data, loading } = useMeQuery();
+  const { data, loading } = useMeQuery({ fetchPolicy: 'cache-first' });
   const [logoutRequest] = useLogoutMutation();
   const router = useRouter();
 

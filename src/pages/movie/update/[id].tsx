@@ -29,7 +29,15 @@ import { useRouter } from 'next/router';
 import { IMovieType } from '../../../types/movie';
 import { ICharacterType } from '../../../types/user';
 import { ListCharacters } from '../../../components/ListCharacters';
+import { EditorState } from 'draft-js';
+import dynamic from 'next/dynamic'; // (if using Next.js or use own dynamic loader)
 import _ from 'lodash';
+const Editor = dynamic<any>(
+  () => import('react-draft-wysiwyg').then((mod) => mod.Editor),
+  { ssr: false }
+);
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import styles from './styles.module.css';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -63,6 +71,9 @@ const CreateMovie: React.FC = () => {
   const [message, setMessage] = useState<JSX.Element | null>();
   const [errors, setErrors] = useState<IErrorState>();
   const router = useRouter();
+  const [editorState, setEditorState] = useState(() =>
+    EditorState.createEmpty()
+  );
   const id = router.query.id as string;
 
   const marks = {
@@ -107,7 +118,7 @@ const CreateMovie: React.FC = () => {
 
   const layout = {
     labelCol: { span: 3 },
-    wrapperCol: { span: 8 },
+    wrapperCol: { span: 10 },
   };
 
   const durationLayout = {
@@ -272,6 +283,10 @@ const CreateMovie: React.FC = () => {
     setCharacters(selectedCharacters as ICharacterType[]);
   };
 
+  const handleEditorChange = (editorState: any) => {
+    setEditorState(editorState);
+  };
+
   const steps = [
     {
       title: 'Movie',
@@ -432,6 +447,28 @@ const CreateMovie: React.FC = () => {
             style={{ marginBottom: '10px' }}
           >
             <DatePicker style={{ width: '100%' }} size='small' />
+          </Form.Item>
+          <Form.Item label='Background' labelAlign='left'>
+            <Editor
+              editorState={editorState}
+              wrapperClassName={styles.wrapperStyles}
+              editorClassName={styles.editorStyles}
+              onEditorStateChange={handleEditorChange}
+              toolbar={{
+                options: ['inline', 'list', 'textAlign'],
+              }}
+            />
+          </Form.Item>
+          <Form.Item label='Synopsis' labelAlign='left'>
+            <Editor
+              editorState={editorState}
+              wrapperClassName={styles.wrapperStyles}
+              editorClassName={styles.editorStyles}
+              onEditorStateChange={handleEditorChange}
+              toolbar={{
+                options: ['inline', 'list', 'textAlign'],
+              }}
+            />
           </Form.Item>
         </Form>
       ),

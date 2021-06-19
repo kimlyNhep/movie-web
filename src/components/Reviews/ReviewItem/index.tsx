@@ -9,6 +9,7 @@ import {
   useUpdateCommentMutation,
 } from '../../../generated/graphql';
 import { useRouter } from 'next/router';
+import htmlParser from 'html-react-parser';
 
 interface IReviewProps {
   item: IReviewsType;
@@ -144,7 +145,7 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
             onChange={handleOnUpdateCommentText}
           ></TextArea>
         </Modal>
-        <div className='mt-4'>{item.comment.text}</div>
+        <div className='mt-4'>{htmlParser(item.comment.text)}</div>
       </div>
     </List.Item>
   );
