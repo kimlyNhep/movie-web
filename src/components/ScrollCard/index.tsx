@@ -1,7 +1,8 @@
-import { Divider, Tooltip } from 'antd';
-import { useEffect } from 'react';
-import { Movie } from '../../generated/graphql';
-import styles from './styles.module.css';
+import { Divider, Tooltip } from "antd";
+import { useEffect } from "react";
+import { Movie } from "../../generated/graphql";
+import styles from "./styles.module.css";
+import cx from "classnames";
 
 export const ScrollCard: React.FC<{
   movies?: Movie[];
@@ -18,7 +19,10 @@ export const ScrollCard: React.FC<{
       <div className={styles.wrapper}>
         {movies?.map((movie) => (
           <Tooltip placement='bottom' title={movie.title} key={movie.id}>
-            <a className={styles.item} href={`/movie/detail/${movie.id}`}>
+            <a
+              className={cx(styles.item, "flex flex-col justify-center")}
+              href={`/movie/detail/${movie.id}`}
+            >
               <img src={movie.photo!} alt='listing' />
             </a>
           </Tooltip>
