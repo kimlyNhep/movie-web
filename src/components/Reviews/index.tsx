@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { ReviewItem } from './ReviewItem';
-import { List, Divider, Input, Button } from 'antd';
+import { List, Divider, Button } from 'antd';
 import { useEffect, useState } from 'react';
 import {
   MeDocument,
@@ -20,7 +20,6 @@ const Reviews: React.FC = () => {
   const router = useRouter();
   const client = useApolloClient();
 
-  const { TextArea } = Input;
   const id = router.query.id as string;
 
   const {

@@ -30,6 +30,7 @@ query GetMovies {
         synopsis
         backgroundInfo
       }
+      rank
     }
   }
 }

@@ -1,8 +1,9 @@
-import { FC } from 'react';
+import { FC } from "react";
 let ReactQuill =
-  typeof window === 'object' ? require('react-quill') : () => false;
-
-import 'react-quill/dist/quill.snow.css';
+  typeof window === "object" ? require("react-quill") : () => false;
+import "react-quill/dist/quill.core.css";
+import "react-quill/dist/quill.bubble.css";
+import "react-quill/dist/quill.snow.css";
 
 interface IRichEditorProps {
   theme?: string;
@@ -16,37 +17,37 @@ export const RichEditor: FC<IRichEditorProps> = (props) => {
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      ["bold", "italic", "underline", "strike", "blockquote"],
       [
-        { list: 'ordered' },
-        { list: 'bullet' },
-        { indent: '-1' },
-        { indent: '+1' },
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
       ],
-      ['link', 'image'],
-      ['clean'],
+      ["link", "image"],
+      ["clean"],
     ],
   };
 
   const formats = [
-    'header',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'list',
-    'bullet',
-    'indent',
-    'link',
-    'image',
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
   ];
 
   return (
     <ReactQuill
       theme={theme}
-      placeholder={'Start from here..'}
-      value={content || ''}
+      placeholder={"Start from here.."}
+      value={content || ""}
       onChange={onChange}
       formats={formats}
       modules={modules}

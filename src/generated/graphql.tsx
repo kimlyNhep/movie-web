@@ -139,6 +139,7 @@ export type Movie = {
   movieCharacters?: Maybe<Array<MovieCharacters>>;
   point?: Maybe<Scalars['Float']>;
   movieState?: Maybe<Array<MovieState>>;
+  rank?: Maybe<Scalars['Int']>;
 };
 
 export type MovieCharacters = {
@@ -861,7 +862,7 @@ export type GetMovieQuery = (
       & Pick<ErrorResponse, 'field' | 'message'>
     )>>, movie?: Maybe<(
       { __typename?: 'Movie' }
-      & Pick<Movie, 'id' | 'description' | 'title' | 'photo' | 'point'>
+      & Pick<Movie, 'id' | 'description' | 'title' | 'photo' | 'point' | 'rank'>
       & { creator: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'username' | 'email' | 'role'>
@@ -916,7 +917,7 @@ export type GetMoviesQuery = (
       & Pick<ErrorResponse, 'field' | 'message'>
     )>>, movies?: Maybe<Array<(
       { __typename?: 'Movie' }
-      & Pick<Movie, 'id' | 'description' | 'title' | 'photo'>
+      & Pick<Movie, 'id' | 'description' | 'title' | 'photo' | 'rank'>
       & { creator: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'username' | 'email' | 'role'>
@@ -1926,6 +1927,7 @@ export const GetMovieDocument = gql`
         drop
       }
       point
+      rank
     }
   }
 }
@@ -2029,6 +2031,7 @@ export const GetMoviesDocument = gql`
         synopsis
         backgroundInfo
       }
+      rank
     }
   }
 }

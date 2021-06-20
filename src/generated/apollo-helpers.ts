@@ -67,7 +67,7 @@ export type LoginResponseFieldPolicy = {
 	user?: FieldPolicy<any> | FieldReadFunction<any>,
 	errors?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type MovieKeySpecifier = ('id' | 'title' | 'description' | 'photo' | 'creator' | 'info' | 'genres' | 'ratingMovies' | 'comment' | 'movieCharacters' | 'point' | 'movieState' | MovieKeySpecifier)[];
+export type MovieKeySpecifier = ('id' | 'title' | 'description' | 'photo' | 'creator' | 'info' | 'genres' | 'ratingMovies' | 'comment' | 'movieCharacters' | 'point' | 'movieState' | 'rank' | MovieKeySpecifier)[];
 export type MovieFieldPolicy = {
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -80,7 +80,8 @@ export type MovieFieldPolicy = {
 	comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	movieCharacters?: FieldPolicy<any> | FieldReadFunction<any>,
 	point?: FieldPolicy<any> | FieldReadFunction<any>,
-	movieState?: FieldPolicy<any> | FieldReadFunction<any>
+	movieState?: FieldPolicy<any> | FieldReadFunction<any>,
+	rank?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type MovieCharactersKeySpecifier = ('character' | 'movie' | 'role' | MovieCharactersKeySpecifier)[];
 export type MovieCharactersFieldPolicy = {

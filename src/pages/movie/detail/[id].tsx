@@ -15,7 +15,6 @@ import styles from './styles.module.css';
 const MovieDetail = () => {
   const router = useRouter();
   const id = router.query.id as string;
-  const rank = router.query.rank as string;
 
   const { data } = useGetMovieQuery({
     variables: {
@@ -69,7 +68,7 @@ const MovieDetail = () => {
             <ScoreBoard
               ratedPoint={data?.getMovie.movie?.point!}
               ratedUser={data?.getMovie.movie?.ratingMovies?.length!}
-              rank={Number(rank)}
+              rank={data?.getMovie.movie?.rank!}
             />
             <RatingBoard
               movieId={id}

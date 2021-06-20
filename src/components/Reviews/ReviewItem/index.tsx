@@ -1,15 +1,16 @@
-import { List, Modal, Input, message } from 'antd';
-import React, { BaseSyntheticEvent, useEffect, useState } from 'react';
-import { IReviewsType } from '../../../types/movie';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { List, Modal, message } from "antd";
+import React, { useEffect, useState } from "react";
+import { IReviewsType } from "../../../types/movie";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import {
   GetCommentsDocument,
   useDeleteCommentMutation,
   useGetCommentLazyQuery,
   useUpdateCommentMutation,
-} from '../../../generated/graphql';
-import { useRouter } from 'next/router';
-import htmlParser from 'html-react-parser';
+} from "../../../generated/graphql";
+import { useRouter } from "next/router";
+import htmlParser from "html-react-parser";
+import { RichEditor } from "../../RichEditor";
 
 interface IReviewProps {
   item: IReviewsType;
@@ -23,10 +24,8 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
   const [deleteRequest] = useDeleteCommentMutation();
 
   const [getCurrentComment, { data: currentComment }] = useGetCommentLazyQuery({
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
   });
-
-  const { TextArea } = Input;
 
   const router = useRouter();
   const movieId = router.query.id as string;
@@ -59,9 +58,9 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
     setEditOpen(true);
   };
 
-  const handleOnUpdateCommentText = (event: BaseSyntheticEvent) => {
-    setCommentText(event.target.value);
-    console.log(event.target.value);
+  const handleOnUpdateCommentText = (value: string) => {
+    setCommentText(value);
+    console.log();
   };
 
   const handleEditComment = async (id: string) => {
@@ -77,7 +76,7 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
         },
       ],
       update: () => {
-        setCommentText('');
+        setCommentText("");
         setEditOpen(false);
       },
     });
@@ -120,14 +119,14 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
               {item?.isEdit && (
                 <EditOutlined
                   className='cursor-pointer mr-3'
-                  style={{ color: 'blue' }}
+                  style={{ color: "blue" }}
                   onClick={() => handleEditOpen(item.comment.id)}
                 />
               )}
               {item?.isDelete && (
                 <DeleteOutlined
                   className='cursor-pointer'
-                  style={{ color: 'red' }}
+                  style={{ color: "red" }}
                   onClick={() => handleDeleteComment(item.comment.id)}
                 />
               )}
@@ -139,13 +138,15 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
           visible={editOpen}
           onOk={() => handleEditComment(item.comment.id)}
           onCancel={handleCancelEdit}
+          width='700px'
         >
-          <TextArea
-            value={commentText}
-            onChange={handleOnUpdateCommentText}
-          ></TextArea>
+          <RichEditor
+            theme='snow'
+            content={commentText}
+            onChange={(content: string) => handleOnUpdateCommentText(content)}
+          />
         </Modal>
-        <div className='mt-4'>{htmlParser(item.comment.text)}</div>
+        <div className='ql-editor'>{htmlParser(item.comment.text)}</div>
       </div>
     </List.Item>
   );

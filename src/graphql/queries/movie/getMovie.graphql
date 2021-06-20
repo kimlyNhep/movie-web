@@ -54,6 +54,7 @@ query GetMovie($id: String!) {
         drop
       }
       point
+      rank
     }
   }
 }
