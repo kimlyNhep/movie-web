@@ -46,14 +46,16 @@ const MovieDetail = () => {
               <strong className='text-lg'>{data?.getMovie.movie?.title}</strong>
               <span>{data?.getMovie.movie?.description}</span>
             </div>
-            <Button
-              size='small'
-              className='self-center px-5'
-              type='primary'
-              onClick={handleUpdateMovie}
-            >
-              Edit
-            </Button>
+            {data?.getMovie.isOwner && (
+              <Button
+                size='small'
+                className='self-center px-5'
+                type='primary'
+                onClick={handleUpdateMovie}
+              >
+                Edit
+              </Button>
+            )}
           </div>
           <Divider className='bg-gray-500 mt-2' />
         </div>

@@ -9,7 +9,7 @@ import {
   Alert,
   Steps,
   List,
-} from 'antd';
+} from "antd";
 import {
   useCreateMovieInformationMutation,
   useCreateMovieMutation,
@@ -18,17 +18,17 @@ import {
   useUploadMoviePhotoMutation,
   StatusType,
   MovieType,
-} from '../../../generated/graphql';
-import Layout from '../../../layout';
-import moment, { Moment } from 'moment';
-import { toErrorMap } from '../../../../utils/errorMap';
-import { useEffect, useState } from 'react';
-import { UploadDropZone } from '../../../components/Upload';
-import { useRouter } from 'next/router';
-import { IMovieType } from '../../../types/movie';
-import { ListCharacters } from '../../../components/ListCharacters';
-import { ICharacterType } from '../../../types/user';
-import _ from 'lodash';
+} from "../../../generated/graphql";
+import Layout from "../../../layout";
+import moment, { Moment } from "moment";
+import { toErrorMap } from "../../../../utils/errorMap";
+import { useEffect, useState } from "react";
+import { UploadDropZone } from "../../../components/Upload";
+import { useRouter } from "next/router";
+import { IMovieType } from "../../../types/movie";
+import { ListCharacters } from "../../../components/ListCharacters";
+import { ICharacterType } from "../../../types/user";
+import _ from "lodash";
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -45,6 +45,8 @@ interface IMovieForm {
   minuate?: number;
   hour?: number;
   releasedDate?: Moment;
+  background: string;
+  synopsis: string;
 }
 
 interface IErrorState {
@@ -89,23 +91,25 @@ const CreateMovie: React.FC = () => {
     wrapperCol: { span: 22 },
   };
 
-  const format = 'HH:mm';
+  const format = "HH:mm";
+
+  const { TextArea } = Input;
 
   const marks = {
-    0: '1',
-    15: '15',
-    30: '30',
-    45: '45',
-    59: '59',
+    0: "1",
+    15: "15",
+    30: "30",
+    45: "45",
+    59: "59",
   };
 
   const markHour = {
-    0: '0',
-    1: '1',
-    2: '2',
-    3: '3',
-    4: '4',
-    5: '5',
+    0: "0",
+    1: "1",
+    2: "2",
+    3: "3",
+    4: "4",
+    5: "5",
   };
 
   const handleAddMovie = async (values: IMovieForm) => {
@@ -158,10 +162,12 @@ const CreateMovie: React.FC = () => {
       episode,
       status,
       releasedDate,
+      background,
+      synopsis,
     } = values;
 
     const time = minuate! * 60 + hour! * 60 * 60;
-    const date = releasedDate?.format('l');
+    const date = releasedDate?.format("l");
 
     if (movie) {
       const response = await createMovieInfoRequest({
@@ -173,6 +179,8 @@ const CreateMovie: React.FC = () => {
           durations: time,
           releasedDate: date,
           movie: movie.id,
+          background,
+          synopsis,
         },
       });
 
@@ -180,7 +188,7 @@ const CreateMovie: React.FC = () => {
         const errors = response.data.createMovieInformation.errors;
         setErrors({ error: toErrorMap(errors), status: true });
       } else if (response.data?.createMovieInformation.info) {
-        router.push('/');
+        router.push("/");
       }
     }
   };
@@ -213,14 +221,14 @@ const CreateMovie: React.FC = () => {
 
   const steps = [
     {
-      title: 'Movie',
+      title: "Movie",
       content: (
         <Form
           {...layout}
           form={form}
           initialValues={{
             remember: true,
-            durations: moment('00:00', format),
+            durations: moment("00:00", format),
           }}
           onFinish={handleAddMovie}
         >
@@ -228,8 +236,8 @@ const CreateMovie: React.FC = () => {
             label='Title'
             name='title'
             labelAlign='left'
-            style={{ marginBottom: '0' }}
-            rules={[{ required: true, message: 'Please input the title' }]}
+            style={{ marginBottom: "0" }}
+            rules={[{ required: true, message: "Please input the title" }]}
           >
             <Input size='small' />
           </Form.Item>
@@ -241,7 +249,7 @@ const CreateMovie: React.FC = () => {
             label='Genres'
             name='genres'
             labelAlign='left'
-            rules={[{ required: true, message: 'Please input Genre' }]}
+            rules={[{ required: true, message: "Please input Genre" }]}
           >
             <Select size='small' mode='multiple'>
               {data?.getGenres.genres?.map((genre) => (
@@ -283,7 +291,7 @@ const CreateMovie: React.FC = () => {
       ),
     },
     {
-      title: 'Adding Image',
+      title: "Adding Image",
       content: (
         <Form {...layout} form={form} onFinish={handleUploadPhoto}>
           <Form.Item label='Photo' name='photo' labelAlign='left'>
@@ -297,15 +305,15 @@ const CreateMovie: React.FC = () => {
       ),
     },
     {
-      title: 'Adding more Information',
+      title: "Adding more Information",
       content: (
         <Form {...layout} form={form} onFinish={handleAddInformation}>
           <Form.Item
             label='Type'
             name='type'
             labelAlign='left'
-            style={{ marginBottom: '0' }}
-            rules={[{ required: true, message: 'Please input the title' }]}
+            style={{ marginBottom: "0" }}
+            rules={[{ required: true, message: "Please input the title" }]}
           >
             <Select size='small'>
               <Option value={MovieType.Tv}>TV</Option>
@@ -316,7 +324,7 @@ const CreateMovie: React.FC = () => {
             label='Producer'
             name='producer'
             labelAlign='left'
-            style={{ marginBottom: '0' }}
+            style={{ marginBottom: "0" }}
           >
             <Input size='small' />
           </Form.Item>
@@ -324,16 +332,16 @@ const CreateMovie: React.FC = () => {
             label='Episode'
             name='episode'
             labelAlign='left'
-            style={{ marginBottom: '0' }}
+            style={{ marginBottom: "0" }}
           >
-            <InputNumber size='small' style={{ width: '100%' }} />
+            <InputNumber size='small' style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             label='Status'
             name='status'
             labelAlign='left'
-            style={{ marginBottom: '0' }}
-            rules={[{ required: true, message: 'Please input the title' }]}
+            style={{ marginBottom: "0" }}
+            rules={[{ required: true, message: "Please input the title" }]}
           >
             <Select size='small'>
               <Option value={StatusType.Completed}>Completed</Option>
@@ -343,7 +351,7 @@ const CreateMovie: React.FC = () => {
           <Form.Item
             label='Duration'
             labelAlign='left'
-            style={{ marginBottom: '0' }}
+            style={{ marginBottom: "0" }}
           >
             <Form.Item
               {...durationLayout}
@@ -368,9 +376,15 @@ const CreateMovie: React.FC = () => {
             label='Released Date'
             name='releasedDate'
             labelAlign='left'
-            style={{ marginBottom: '10px' }}
+            style={{ marginBottom: "10px" }}
           >
-            <DatePicker style={{ width: '100%' }} size='small' />
+            <DatePicker style={{ width: "100%" }} size='small' />
+          </Form.Item>
+          <Form.Item label='Background' labelAlign='left' name='background'>
+            <TextArea size='small' />
+          </Form.Item>
+          <Form.Item label='Synopsis' labelAlign='left' name='synopsis'>
+            <TextArea size='small' />
           </Form.Item>
         </Form>
       ),
@@ -419,7 +433,7 @@ const CreateMovie: React.FC = () => {
                 loading={photoLoading}
                 size='small'
                 htmlType='submit'
-                style={{ margin: '0 8px' }}
+                style={{ margin: "0 8px" }}
                 onClick={() => form.submit()}
               >
                 Upload
@@ -428,7 +442,7 @@ const CreateMovie: React.FC = () => {
               <Button
                 type='primary'
                 size='small'
-                style={{ margin: '0 8px' }}
+                style={{ margin: "0 8px" }}
                 onClick={() => next()}
               >
                 Next
@@ -438,7 +452,7 @@ const CreateMovie: React.FC = () => {
             <Button
               type='primary'
               size='small'
-              style={{ margin: '0 8px' }}
+              style={{ margin: "0 8px" }}
               loading={movieLoading}
               onClick={() => form.submit()}
             >

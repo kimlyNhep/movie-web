@@ -1,0 +1,19 @@
+query getMoviesByYear($year: Float!, $search: String) {
+  getMoviesByYear(year: $year, search: $search) {
+    errors {
+      field
+      message
+    }
+    movies {
+      id
+      title
+      photo
+      creator {
+        id
+        username
+        email
+        role
+      }
+    }
+  }
+}

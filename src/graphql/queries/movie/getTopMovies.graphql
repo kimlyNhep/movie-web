@@ -1,0 +1,15 @@
+query getTopMovies {
+  getTopMovies {
+    errors {
+      field
+      message
+    }
+    movies {
+      id
+      title
+      point
+      description
+      photo
+    }
+  }
+}

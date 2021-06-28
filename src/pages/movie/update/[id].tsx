@@ -29,15 +29,7 @@ import { useRouter } from 'next/router';
 import { IMovieType } from '../../../types/movie';
 import { ICharacterType } from '../../../types/user';
 import { ListCharacters } from '../../../components/ListCharacters';
-import { EditorState } from 'draft-js';
-import dynamic from 'next/dynamic'; // (if using Next.js or use own dynamic loader)
 import _ from 'lodash';
-const Editor = dynamic<any>(
-  () => import('react-draft-wysiwyg').then((mod) => mod.Editor),
-  { ssr: false }
-);
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import styles from './styles.module.css';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -55,6 +47,8 @@ interface IMovieForm {
   minuate?: number;
   releasedDate?: Moment;
   characters: string[];
+  background: string;
+  synopsis: string;
 }
 
 interface IErrorState {
@@ -62,7 +56,7 @@ interface IErrorState {
   error: { field: string; message: string };
 }
 
-const CreateMovie: React.FC = () => {
+const UpdateMovie: React.FC = () => {
   const [current, setCurrent] = useState(0);
   const [movie, setMovie] = useState<IMovieType>();
   const { data } = useGetGenresQuery();
@@ -71,10 +65,9 @@ const CreateMovie: React.FC = () => {
   const [message, setMessage] = useState<JSX.Element | null>();
   const [errors, setErrors] = useState<IErrorState>();
   const router = useRouter();
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
   const id = router.query.id as string;
+
+  const { TextArea } = Input;
 
   const marks = {
     1: '1',
@@ -112,7 +105,17 @@ const CreateMovie: React.FC = () => {
   const [
     updateMovieRequest,
     { loading: movieLoading },
-  ] = useUpdateMovieMutation();
+  ] = useUpdateMovieMutation({
+    onCompleted({ updateMovie }) {
+      if (updateMovie.movie) {
+        setMovie(updateMovie.movie as IMovieType);
+        setCurrent(current + 1);
+      } else if (updateMovie.errors) {
+        const errors = updateMovie.errors;
+        setErrors({ error: toErrorMap(errors), status: true });
+      }
+    },
+  });
 
   const [form] = Form.useForm();
 
@@ -131,9 +134,7 @@ const CreateMovie: React.FC = () => {
   const handleAddMovie = async (values: IMovieForm) => {
     const { title, description, genres } = values;
 
-    console.log('Genres : ', genres);
-
-    const response = await updateMovieRequest({
+    await updateMovieRequest({
       variables: {
         id,
         title,
@@ -145,14 +146,6 @@ const CreateMovie: React.FC = () => {
         })),
       },
     });
-
-    if (response.data?.updateMovie.errors) {
-      const errors = response.data.updateMovie.errors;
-      setErrors({ error: toErrorMap(errors), status: true });
-    } else if (response.data?.updateMovie.movie) {
-      setMovie(response.data.updateMovie.movie as IMovieType);
-      setCurrent(current + 1);
-    }
   };
 
   const handleUploadPhoto = async () => {
@@ -182,6 +175,8 @@ const CreateMovie: React.FC = () => {
       minuate,
       hour,
       releasedDate,
+      background,
+      synopsis,
     } = values;
 
     const time = minuate! * 60 + hour! * 60 * 60;
@@ -198,6 +193,8 @@ const CreateMovie: React.FC = () => {
           durations: time,
           releasedDate: date,
           movie: movie.id,
+          backgroundInfo: background,
+          synopsis,
         },
       });
 
@@ -236,6 +233,8 @@ const CreateMovie: React.FC = () => {
       characters: movie?.movieCharacters?.map(
         (movieCharacter) => movieCharacter.character.id
       ),
+      background: movie?.info?.backgroundInfo,
+      synopsis: movie?.info?.synopsis,
     });
 
     const newCharacters = movie?.movieCharacters?.map((movieCharacter) => ({
@@ -283,9 +282,9 @@ const CreateMovie: React.FC = () => {
     setCharacters(selectedCharacters as ICharacterType[]);
   };
 
-  const handleEditorChange = (editorState: any) => {
-    setEditorState(editorState);
-  };
+  useEffect(() => {
+    console.log(characters);
+  }, [characters]);
 
   const steps = [
     {
@@ -311,7 +310,7 @@ const CreateMovie: React.FC = () => {
           </Form.Item>
 
           <Form.Item label='Description' name='description' labelAlign='left'>
-            <Input.TextArea size='small' />
+            <TextArea size='small' />
           </Form.Item>
           <Form.Item
             label='Genres'
@@ -448,27 +447,11 @@ const CreateMovie: React.FC = () => {
           >
             <DatePicker style={{ width: '100%' }} size='small' />
           </Form.Item>
-          <Form.Item label='Background' labelAlign='left'>
-            <Editor
-              editorState={editorState}
-              wrapperClassName={styles.wrapperStyles}
-              editorClassName={styles.editorStyles}
-              onEditorStateChange={handleEditorChange}
-              toolbar={{
-                options: ['inline', 'list', 'textAlign'],
-              }}
-            />
+          <Form.Item label='Background' labelAlign='left' name='background'>
+            <TextArea size='small' />
           </Form.Item>
-          <Form.Item label='Synopsis' labelAlign='left'>
-            <Editor
-              editorState={editorState}
-              wrapperClassName={styles.wrapperStyles}
-              editorClassName={styles.editorStyles}
-              onEditorStateChange={handleEditorChange}
-              toolbar={{
-                options: ['inline', 'list', 'textAlign'],
-              }}
-            />
+          <Form.Item label='Synopsis' labelAlign='left' name='synopsis'>
+            <TextArea size='small' />
           </Form.Item>
         </Form>
       ),
@@ -570,4 +553,4 @@ const CreateMovie: React.FC = () => {
   );
 };
 
-export default CreateMovie;
+export default UpdateMovie;

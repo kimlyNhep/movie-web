@@ -56,5 +56,6 @@ query GetMovie($id: String!) {
       point
       rank
     }
+    isOwner
   }
 }

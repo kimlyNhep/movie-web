@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Form, Button, Divider, Input, Checkbox, Alert } from 'antd';
+import {
+  Card,
+  Form,
+  Button,
+  Divider,
+  Input,
+  Checkbox,
+  Alert,
+  message as messageAlert,
+} from 'antd';
 import cls from 'classnames';
 import { useRouter } from 'next/router';
 import styles from './styles.module.css';
@@ -19,7 +28,16 @@ const CreateActor: React.FC<IRegisterProps> = () => {
   const router = useRouter();
   const [errors, setErrors] = useState<IErrorState>();
   const [message, setMessage] = useState<JSX.Element | null>();
-  const [createCharacterRequest, { data }] = useCreateCharacterMutation();
+  const [createCharacterRequest, { loading }] = useCreateCharacterMutation({
+    onCompleted({ createCharacter }) {
+      if (createCharacter.character) {
+        messageAlert.success('Successful created new Character');
+      } else {
+        const errors = createCharacter.errors;
+        setErrors({ error: toErrorMap(errors!), status: true });
+      }
+    },
+  });
   const [selectedFile, setSelectedFile] = useState<
     | {
         preview: string;
@@ -44,14 +62,7 @@ const CreateActor: React.FC<IRegisterProps> = () => {
       },
     });
 
-    if (data?.createCharacter.character) {
-      // router.push('/');
-    } else if (data?.createCharacter.errors) {
-      const errors = data?.createCharacter.errors;
-      setErrors({ error: toErrorMap(errors), status: true });
-    } else {
-      console.log('Something went wrong');
-    }
+    if (loading) messageAlert.loading({ content: 'Creating new Character' });
   };
 
   useEffect(() => {

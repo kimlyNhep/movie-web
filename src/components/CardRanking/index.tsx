@@ -5,6 +5,7 @@ interface ICardProps {
   rank: number;
   href: string;
   description: string;
+  photo: string;
 }
 
 export const CardRanking: React.FC<ICardProps> = ({
@@ -12,6 +13,7 @@ export const CardRanking: React.FC<ICardProps> = ({
   rank,
   href,
   description,
+  photo,
 }) => {
   return (
     <List.Item key={title}>
@@ -22,11 +24,7 @@ export const CardRanking: React.FC<ICardProps> = ({
           style={{ minWidth: '50px', maxHeight: '70px' }}
           className='ml-3'
         >
-          <img
-            src='https://cdn.myanimelist.net/r/50x70/images/anime/9/9453.webp?s=bcf651aae2cd301a32bcc46e317a98bc'
-            alt='ranking'
-            width='50'
-          />
+          <img src={photo} alt='ranking' width='50' />
         </a>
         <div className='flex flex-col ml-3'>
           <a href={href}>{title}</a>

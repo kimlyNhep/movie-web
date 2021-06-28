@@ -1,9 +1,13 @@
 import { Layout, Menu, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import { FC } from 'react';
+import { ChangeEventHandler } from 'react';
 
 const { Header } = Layout;
 
-export const Navbar = () => {
+export const Navbar: FC<{ onSearch: ChangeEventHandler<HTMLInputElement> }> = ({
+  onSearch,
+}) => {
   return (
     <Header>
       <Menu mode='horizontal' defaultSelectedKeys={['1']}>
@@ -17,6 +21,7 @@ export const Navbar = () => {
             placeholder='Input to search'
             size='small'
             suffix={<SearchOutlined />}
+            onChange={onSearch}
           />
         </Menu.Item>
       </Menu>

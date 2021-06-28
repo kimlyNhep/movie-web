@@ -11,7 +11,7 @@ export const MovieSide: React.FC<IMovieSideProps> = ({ movie }) => {
   return (
     <div className={styles.profileSide}>
       <Image className={styles.photo} src={movie?.photo} preview={false} />
-      <MovieDetailInfo info={movie?.info} />
+      <MovieDetailInfo info={movie?.info} genres={movie?.genres} />
     </div>
   );
 };

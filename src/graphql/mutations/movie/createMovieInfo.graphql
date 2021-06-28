@@ -6,6 +6,8 @@ mutation CreateMovieInformation(
   $durations: Int
   $releasedDate: String
   $movie: String!
+  $background: String
+  $synopsis: String
 ) {
   createMovieInformation(
     options: {
@@ -16,6 +18,8 @@ mutation CreateMovieInformation(
       durations: $durations
       released_date: $releasedDate
       movie: $movie
+      backgroundInfo: $background
+      synopsis: $synopsis
     }
   ) {
     info {

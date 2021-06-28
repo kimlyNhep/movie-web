@@ -1,35 +1,36 @@
-import { Button, Divider } from 'antd';
-import { useRouter } from 'next/router';
-import { ProfileSide } from '../../../components/ProfileSide';
+import { Button, Divider } from "antd";
+import { useRouter } from "next/router";
+import { ProfileSide } from "../../../components/ProfileSide";
 import {
   MeDocument,
   MeQuery,
   useGetMovieStateQuery,
   useMeQuery,
   UserRoles,
-} from '../../../generated/graphql';
-import Layout from '../../../layout';
-import { IUserType } from '../../../types/user';
-import cx from 'classnames';
-import styles from './styles.module.css';
-import { ApolloQueryResult, useApolloClient } from '@apollo/client';
-import { useEffect } from 'react';
-import { useState } from 'react';
+} from "../../../generated/graphql";
+import Layout from "../../../layout";
+import { IUserType } from "../../../types/user";
+import cx from "classnames";
+import styles from "./styles.module.css";
+import { ApolloQueryResult, useApolloClient } from "@apollo/client";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const ProfileDetail = () => {
-  const { data } = useMeQuery({ fetchPolicy: 'cache-only' });
+  const { data } = useMeQuery({ fetchPolicy: "cache-only" });
   const router = useRouter();
   const client = useApolloClient();
   const [isAdmin, setIsAdmin] = useState<boolean>();
   const { data: movieStateData } = useGetMovieStateQuery();
   const [currentUser, setCurrentUser] = useState<ApolloQueryResult<MeQuery>>();
+  const [joinDate, setJoinDate] = useState<string>();
 
   const handleAddMovie = () => {
-    router.push('/movie/create');
+    router.push("/movie/create");
   };
 
   const handleNewGenre = () => {
-    router.push('/genre/create');
+    router.push("/genre/create");
   };
 
   const id = router.query.id as string;
@@ -37,6 +38,8 @@ const ProfileDetail = () => {
   const fetchUser = async () => {
     const currentUser = await client.query<MeQuery>({ query: MeDocument });
     setCurrentUser(currentUser);
+
+    setJoinDate(new Date(currentUser.data.me?.createdAt).toDateString());
 
     const adminState = currentUser.data.me?.role === UserRoles.Admin;
     setIsAdmin(adminState);
@@ -52,19 +55,14 @@ const ProfileDetail = () => {
 
   return (
     <Layout>
-      <div className={cx(styles.profileInfo, 'flex flex-col h-full')}>
+      <div className={cx(styles.profileInfo, "flex flex-col h-full")}>
         <strong className='mb-2 text-center'>
           {currentUser?.data.me?.username}
         </strong>
         <ProfileSide profile={data?.me as IUserType} />
-        <div className='mt-1 bg-gray-100'>
-          <strong>Status</strong>
-        </div>
-        <div className='bg-gray-200'>
-          <strong>Joined</strong>
-        </div>
-        <div className='bg-gray-100'>
-          <strong>Last Online</strong>
+        <div className='bg-gray-200 flex justify-between items-center'>
+          <span>Joined</span>
+          <span className='text-xs'>{joinDate}</span>
         </div>
         <Button
           type='primary'
@@ -74,14 +72,10 @@ const ProfileDetail = () => {
         >
           Movie List
         </Button>
-        <div className='mt-5 flex justify-between'>
-          <strong>Friends</strong>
-          <div>All</div>
-        </div>
         <Divider />
       </div>
       <div className='flex w-full'>
-        <Divider type='vertical' style={{ height: '100%' }} />
+        <Divider type='vertical' style={{ height: "100%" }} />
         <div className='w-full'>
           <div>
             <strong>Biology</strong>
@@ -92,7 +86,7 @@ const ProfileDetail = () => {
           </div>
           <Divider className='w-full' style={{ margin: 0 }} />
           <div className='flex justify-between mt-5'>
-            <div style={{ width: '45%' }}>
+            <div style={{ width: "45%" }}>
               <div>
                 <strong>Movie State</strong>
               </div>
@@ -126,7 +120,7 @@ const ProfileDetail = () => {
                 <span>{movieStateData?.getMovieState.drop}</span>
               </div>
             </div>
-            <div style={{ width: '45%' }}>
+            <div style={{ width: "45%" }}>
               <div>
                 <strong>Last Movie Updated</strong>
               </div>

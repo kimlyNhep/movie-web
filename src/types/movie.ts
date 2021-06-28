@@ -1,6 +1,6 @@
-import { MovieType, StatusType } from '../generated/graphql';
-import { IGenreType } from './genre';
-import { IUserType } from './user';
+import { MovieType, StatusType } from "../generated/graphql";
+import { IGenreType } from "./genre";
+import { IUserType } from "./user";
 
 export interface IMovieType {
   id: string;
@@ -20,6 +20,8 @@ export interface IMovieInfoType {
   released_date: number;
   status: StatusType;
   type: MovieType;
+  backgroundInfo: string;
+  synopsis: string;
 }
 
 export interface IReviewsType {
@@ -34,8 +36,8 @@ export interface IReviewsType {
 }
 
 export enum MovieStateType {
-  Watching = 'Watching',
-  Plantowatch = 'Plantowatch',
-  Completed = 'Completed',
-  Drop = 'Drop',
+  Watching = "Watching",
+  Plantowatch = "Plantowatch",
+  Completed = "Completed",
+  Drop = "Drop",
 }

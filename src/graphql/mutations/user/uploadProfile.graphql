@@ -1,0 +1,6 @@
+mutation UploadProfile($photo: Upload!) {
+  uploadProfile(photo: $photo) {
+    message
+    ok
+  }
+}

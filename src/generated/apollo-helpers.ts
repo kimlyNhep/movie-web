@@ -117,6 +117,12 @@ export type MovieResponseFieldPolicy = {
 	movie?: FieldPolicy<any> | FieldReadFunction<any>,
 	errors?: FieldPolicy<any> | FieldReadFunction<any>
 };
+export type MovieResponseWithPermissionKeySpecifier = ('movie' | 'isOwner' | 'errors' | MovieResponseWithPermissionKeySpecifier)[];
+export type MovieResponseWithPermissionFieldPolicy = {
+	movie?: FieldPolicy<any> | FieldReadFunction<any>,
+	isOwner?: FieldPolicy<any> | FieldReadFunction<any>,
+	errors?: FieldPolicy<any> | FieldReadFunction<any>
+};
 export type MovieStateKeySpecifier = ('watching' | 'planToWatch' | 'completed' | 'drop' | 'user' | 'movie' | MovieStateKeySpecifier)[];
 export type MovieStateFieldPolicy = {
 	watching?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -142,14 +148,14 @@ export type MoviesResponseFieldPolicy = {
 	movies?: FieldPolicy<any> | FieldReadFunction<any>,
 	errors?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type MutationKeySpecifier = ('updateMovieState' | 'uploadMoviePhoto' | 'createGenre' | 'register' | 'login' | 'logout' | 'updateMovie' | 'createMovie' | 'ratingMovie' | 'createCharacter' | 'updateMovieInfo' | 'createMovieInformation' | 'updateComment' | 'deleteComment' | 'commentMovies' | MutationKeySpecifier)[];
+export type MutationKeySpecifier = ('uploadMoviePhoto' | 'createGenre' | 'register' | 'login' | 'logout' | 'uploadProfile' | 'updateMovie' | 'createMovie' | 'ratingMovie' | 'createCharacter' | 'updateMovieInfo' | 'createMovieInformation' | 'updateComment' | 'deleteComment' | 'commentMovies' | 'updateMovieState' | MutationKeySpecifier)[];
 export type MutationFieldPolicy = {
-	updateMovieState?: FieldPolicy<any> | FieldReadFunction<any>,
 	uploadMoviePhoto?: FieldPolicy<any> | FieldReadFunction<any>,
 	createGenre?: FieldPolicy<any> | FieldReadFunction<any>,
 	register?: FieldPolicy<any> | FieldReadFunction<any>,
 	login?: FieldPolicy<any> | FieldReadFunction<any>,
 	logout?: FieldPolicy<any> | FieldReadFunction<any>,
+	uploadProfile?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateMovie?: FieldPolicy<any> | FieldReadFunction<any>,
 	createMovie?: FieldPolicy<any> | FieldReadFunction<any>,
 	ratingMovie?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -158,16 +164,15 @@ export type MutationFieldPolicy = {
 	createMovieInformation?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateComment?: FieldPolicy<any> | FieldReadFunction<any>,
 	deleteComment?: FieldPolicy<any> | FieldReadFunction<any>,
-	commentMovies?: FieldPolicy<any> | FieldReadFunction<any>
+	commentMovies?: FieldPolicy<any> | FieldReadFunction<any>,
+	updateMovieState?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type NumberUserTypeKeySpecifier = ('total' | NumberUserTypeKeySpecifier)[];
 export type NumberUserTypeFieldPolicy = {
 	total?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('getCurrentMovieState' | 'getMovieState' | 'getGenres' | 'me' | 'getTotalUsers' | 'getMovie' | 'getMovies' | 'getMoviesByYear' | 'getRankingMovies' | 'getMoviesByUser' | 'getAllCharacter' | 'getComments' | 'getComment' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('getGenres' | 'me' | 'getTotalUsers' | 'getMovie' | 'getMovies' | 'getMoviesByYear' | 'getRankingMovies' | 'getMoviesByUser' | 'getTopMovies' | 'getAllCharacter' | 'getComments' | 'getComment' | 'getCurrentMovieState' | 'getMovieState' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
-	getCurrentMovieState?: FieldPolicy<any> | FieldReadFunction<any>,
-	getMovieState?: FieldPolicy<any> | FieldReadFunction<any>,
 	getGenres?: FieldPolicy<any> | FieldReadFunction<any>,
 	me?: FieldPolicy<any> | FieldReadFunction<any>,
 	getTotalUsers?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -176,9 +181,12 @@ export type QueryFieldPolicy = {
 	getMoviesByYear?: FieldPolicy<any> | FieldReadFunction<any>,
 	getRankingMovies?: FieldPolicy<any> | FieldReadFunction<any>,
 	getMoviesByUser?: FieldPolicy<any> | FieldReadFunction<any>,
+	getTopMovies?: FieldPolicy<any> | FieldReadFunction<any>,
 	getAllCharacter?: FieldPolicy<any> | FieldReadFunction<any>,
 	getComments?: FieldPolicy<any> | FieldReadFunction<any>,
-	getComment?: FieldPolicy<any> | FieldReadFunction<any>
+	getComment?: FieldPolicy<any> | FieldReadFunction<any>,
+	getCurrentMovieState?: FieldPolicy<any> | FieldReadFunction<any>,
+	getMovieState?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type RankingTypeKeySpecifier = ('rankingMovie' | 'rank' | RankingTypeKeySpecifier)[];
 export type RankingTypeFieldPolicy = {
@@ -197,7 +205,7 @@ export type RegisterResponseFieldPolicy = {
 	errors?: FieldPolicy<any> | FieldReadFunction<any>,
 	accessToken?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type UserKeySpecifier = ('id' | 'email' | 'username' | 'role' | 'movies' | 'photo' | 'ratingMovies' | 'comment' | 'movieState' | UserKeySpecifier)[];
+export type UserKeySpecifier = ('id' | 'email' | 'username' | 'role' | 'movies' | 'photo' | 'ratingMovies' | 'comment' | 'movieState' | 'createdAt' | UserKeySpecifier)[];
 export type UserFieldPolicy = {
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	email?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -207,7 +215,8 @@ export type UserFieldPolicy = {
 	photo?: FieldPolicy<any> | FieldReadFunction<any>,
 	ratingMovies?: FieldPolicy<any> | FieldReadFunction<any>,
 	comment?: FieldPolicy<any> | FieldReadFunction<any>,
-	movieState?: FieldPolicy<any> | FieldReadFunction<any>
+	movieState?: FieldPolicy<any> | FieldReadFunction<any>,
+	createdAt?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type UserMovieStateResponseKeySpecifier = ('watching' | 'completed' | 'planToWatch' | 'drop' | 'errors' | UserMovieStateResponseKeySpecifier)[];
 export type UserMovieStateResponseFieldPolicy = {
@@ -216,6 +225,11 @@ export type UserMovieStateResponseFieldPolicy = {
 	planToWatch?: FieldPolicy<any> | FieldReadFunction<any>,
 	drop?: FieldPolicy<any> | FieldReadFunction<any>,
 	errors?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type UserUpdatedResponseKeySpecifier = ('ok' | 'message' | UserUpdatedResponseKeySpecifier)[];
+export type UserUpdatedResponseFieldPolicy = {
+	ok?: FieldPolicy<any> | FieldReadFunction<any>,
+	message?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type TypedTypePolicies = TypePolicies & {
 	Character?: Omit<TypePolicy, "fields" | "keyFields"> & {
@@ -290,6 +304,10 @@ export type TypedTypePolicies = TypePolicies & {
 		keyFields?: false | MovieResponseKeySpecifier | (() => undefined | MovieResponseKeySpecifier),
 		fields?: MovieResponseFieldPolicy,
 	},
+	MovieResponseWithPermission?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | MovieResponseWithPermissionKeySpecifier | (() => undefined | MovieResponseWithPermissionKeySpecifier),
+		fields?: MovieResponseWithPermissionFieldPolicy,
+	},
 	MovieState?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | MovieStateKeySpecifier | (() => undefined | MovieStateKeySpecifier),
 		fields?: MovieStateFieldPolicy,
@@ -337,5 +355,9 @@ export type TypedTypePolicies = TypePolicies & {
 	UserMovieStateResponse?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | UserMovieStateResponseKeySpecifier | (() => undefined | UserMovieStateResponseKeySpecifier),
 		fields?: UserMovieStateResponseFieldPolicy,
+	},
+	UserUpdatedResponse?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | UserUpdatedResponseKeySpecifier | (() => undefined | UserUpdatedResponseKeySpecifier),
+		fields?: UserUpdatedResponseFieldPolicy,
 	}
 };
