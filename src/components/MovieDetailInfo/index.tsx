@@ -21,10 +21,6 @@ export const MovieDetailInfo: React.FC<IMovieInfoProps> = ({
   const time = Math.floor(second! / 3600);
   const min = Math.floor((second! % 3600) / 60);
 
-  useEffect(() => {
-    console.log(genres);
-  }, [genres]);
-
   return (
     <div>
       <strong>Information</strong>

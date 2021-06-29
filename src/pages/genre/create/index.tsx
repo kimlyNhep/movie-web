@@ -17,7 +17,11 @@ interface IErrorState {
 const CreateMovie: React.FC = () => {
   const [message, setMessage] = useState<JSX.Element | null>();
   const [errors, setErrors] = useState<IErrorState>();
-  const [createGenreRequest] = useCreateGenreMutation();
+  const [createGenreRequest] = useCreateGenreMutation({
+    onCompleted({ createGenre }) {
+      if (createGenre.genre) router.push('/');
+    },
+  });
   const router = useRouter();
 
   const [form] = Form.useForm();
@@ -35,34 +39,11 @@ const CreateMovie: React.FC = () => {
     const { name } = value;
 
     try {
-      const response = await createGenreRequest({
+      await createGenreRequest({
         variables: {
           name,
         },
-        // update: (cache, { data }) => {
-        //   const existingGenres = cache.readQuery<GetGenresQuery>({
-        //     query: GetGenresDocument,
-        //   });
-
-        //   cache.writeQuery<GetGenresQuery>({
-        //     query: GetGenresDocument,
-        //     data: {
-        //       getGenres: {
-        //         genres: [
-        //           ...existingGenres?.getGenres.genres,
-        //           data?.createGenre.genre!,
-        //         ],
-        //       },
-        //     },
-        //   });
-        // },
       });
-
-      if (response.data?.createGenre.errors) {
-        console.log(response.data.createGenre.errors);
-      } else if (response.data?.createGenre.genre) {
-        router.push('/');
-      }
     } catch (err) {
       setErrors({
         status: true,

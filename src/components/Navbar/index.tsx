@@ -5,9 +5,9 @@ import { ChangeEventHandler } from 'react';
 
 const { Header } = Layout;
 
-export const Navbar: FC<{ onSearch: ChangeEventHandler<HTMLInputElement> }> = ({
-  onSearch,
-}) => {
+export const Navbar: FC<{
+  onSearch?: ChangeEventHandler<HTMLInputElement>;
+}> = ({ onSearch }) => {
   return (
     <Header>
       <Menu mode='horizontal' defaultSelectedKeys={['1']}>

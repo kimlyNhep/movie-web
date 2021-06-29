@@ -25,7 +25,7 @@ import { ChangeEventHandler } from 'react';
 
 interface ILayoutProps {
   classname?: string;
-  onSearch: ChangeEventHandler<HTMLInputElement>;
+  onSearch?: ChangeEventHandler<HTMLInputElement>;
 }
 
 const MainLayout: React.FC<ILayoutProps> = ({

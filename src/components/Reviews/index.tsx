@@ -52,7 +52,6 @@ const Reviews: React.FC = () => {
 
   const handleCommentChange = (value: string) => {
     setCommentvalue(value);
-    console.log(value);
   };
 
   const fetchUser = async () => {

@@ -23,7 +23,7 @@ const Login: NextPage<ILoginProps> = () => {
   const router = useRouter();
   const [form] = Form.useForm();
   const [message, setMessage] = useState<JSX.Element | null>();
-  const [loginRequest, { loading }] = useLoginMutation({
+  const [loginRequest] = useLoginMutation({
     onCompleted({ login }) {
       if (login.accessToken) {
         cookie.set('token', login.accessToken);
@@ -74,9 +74,6 @@ const Login: NextPage<ILoginProps> = () => {
         });
       },
     });
-    if (loading) {
-      console.log('Loading...');
-    }
   };
 
   return (

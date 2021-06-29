@@ -1,16 +1,16 @@
-import { List, Modal, message } from "antd";
-import React, { useEffect, useState } from "react";
-import { IReviewsType } from "../../../types/movie";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { List, Modal, message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { IReviewsType } from '../../../types/movie';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   GetCommentsDocument,
   useDeleteCommentMutation,
   useGetCommentLazyQuery,
   useUpdateCommentMutation,
-} from "../../../generated/graphql";
-import { useRouter } from "next/router";
-import htmlParser from "html-react-parser";
-import { RichEditor } from "../../RichEditor";
+} from '../../../generated/graphql';
+import { useRouter } from 'next/router';
+import htmlParser from 'html-react-parser';
+import { RichEditor } from '../../RichEditor';
 
 interface IReviewProps {
   item: IReviewsType;
@@ -24,7 +24,7 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
   const [deleteRequest] = useDeleteCommentMutation();
 
   const [getCurrentComment, { data: currentComment }] = useGetCommentLazyQuery({
-    fetchPolicy: "no-cache",
+    fetchPolicy: 'no-cache',
   });
 
   const router = useRouter();
@@ -60,7 +60,6 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
 
   const handleOnUpdateCommentText = (value: string) => {
     setCommentText(value);
-    console.log();
   };
 
   const handleEditComment = async (id: string) => {
@@ -76,7 +75,7 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
         },
       ],
       update: () => {
-        setCommentText("");
+        setCommentText('');
         setEditOpen(false);
       },
     });
@@ -99,10 +98,6 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
     }
   }, [currentComment]);
 
-  useEffect(() => {
-    console.log(item);
-  }, []);
-
   return (
     <List.Item key={item.comment.id}>
       <div className='w-full'>
@@ -119,14 +114,14 @@ export const ReviewItem: React.FC<IReviewProps> = ({ item }) => {
               {item?.isEdit && (
                 <EditOutlined
                   className='cursor-pointer mr-3'
-                  style={{ color: "blue" }}
+                  style={{ color: 'blue' }}
                   onClick={() => handleEditOpen(item.comment.id)}
                 />
               )}
               {item?.isDelete && (
                 <DeleteOutlined
                   className='cursor-pointer'
-                  style={{ color: "red" }}
+                  style={{ color: 'red' }}
                   onClick={() => handleDeleteComment(item.comment.id)}
                 />
               )}

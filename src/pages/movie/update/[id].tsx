@@ -258,7 +258,6 @@ const UpdateMovie: React.FC = () => {
       const newCharacters = _.cloneDeep(characters);
       newCharacters[foundedIndex].role = value;
       setCharacters(newCharacters);
-      console.log(newCharacters);
     }
   };
 
@@ -281,10 +280,6 @@ const UpdateMovie: React.FC = () => {
 
     setCharacters(selectedCharacters as ICharacterType[]);
   };
-
-  useEffect(() => {
-    console.log(characters);
-  }, [characters]);
 
   const steps = [
     {

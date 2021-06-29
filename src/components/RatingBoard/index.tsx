@@ -1,8 +1,8 @@
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { Button, Card, Rate, Select } from "antd";
-import styles from "./styles.module.css";
-import cls from "classnames";
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { Button, Card, Rate, Select } from 'antd';
+import styles from './styles.module.css';
+import cls from 'classnames';
 import {
   GetMovieDocument,
   MeDocument,
@@ -11,9 +11,9 @@ import {
   useGetCurrentMovieStateQuery,
   useRatingMovieMutation,
   useUpdateMovieStateMutation,
-} from "../../generated/graphql";
-import { ApolloQueryResult, useApolloClient } from "@apollo/client";
-import { MovieStateType } from "../../types/movie";
+} from '../../generated/graphql';
+import { ApolloQueryResult, useApolloClient } from '@apollo/client';
+import { MovieStateType } from '../../types/movie';
 
 interface IRatingBoardProps {
   movieId: string;
@@ -72,8 +72,6 @@ export const RatingBoard: React.FC<IRatingBoardProps> = ({
   };
 
   useEffect(() => {
-    console.log(currentUser);
-
     if (ratedPoint) {
       ratedPoint?.forEach((point) => {
         if (currentUser?.data.me?.id === point.user.id) {
@@ -101,8 +99,6 @@ export const RatingBoard: React.FC<IRatingBoardProps> = ({
 
   useEffect(() => {
     fetchUser();
-
-    console.log();
   }, []);
 
   useEffect(() => {
@@ -114,8 +110,6 @@ export const RatingBoard: React.FC<IRatingBoardProps> = ({
       setSelectedMovieState(MovieStateType.Plantowatch);
     if (data?.getCurrentMovieState.drop === 1)
       setSelectedMovieState(MovieStateType.Drop);
-
-    console.log(data);
   }, [data]);
 
   useEffect(() => {
@@ -127,7 +121,7 @@ export const RatingBoard: React.FC<IRatingBoardProps> = ({
       <Card
         className={cls(
           styles.card,
-          "bg-gray-200 w-full border border-gray-300 mt-5"
+          'bg-gray-200 w-full border border-gray-300 mt-5'
         )}
       >
         <div className='flex h-10 w-full'>
@@ -153,7 +147,7 @@ export const RatingBoard: React.FC<IRatingBoardProps> = ({
             <Select
               size='small'
               placeholder='Select State'
-              style={{ width: "150px", marginLeft: "1.5rem" }}
+              style={{ width: '150px', marginLeft: '1.5rem' }}
               allowClear
               onSelect={handleSelectChange}
               value={selectedMovieState}
